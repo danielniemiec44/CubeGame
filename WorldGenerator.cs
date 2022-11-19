@@ -56,6 +56,7 @@ public class WorldGenerator : MonoBehaviour
         //cubeTrianglesCount = cubeTriangles.Length;
         
         Debug.Log(String.Join(", ", cubeVertices));
+        Debug.Log(String.Join(", ", cubeTriangles));
 
         Destroy(cube);
 
@@ -174,14 +175,14 @@ public class WorldGenerator : MonoBehaviour
                     for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
 
                         /*
-                        vertices[cubeNumber * 8] = new Vector3 (x, y, z);
-                        vertices[(cubeNumber * 8) + 1] = new Vector3 (x + 1, y, z);
-                        vertices[(cubeNumber * 8) + 2] = new Vector3 (x + 1, y + 1, z);
-                        vertices[(cubeNumber * 8) + 3] = new Vector3 (x, y + 1, z);
-                        vertices[(cubeNumber * 8) + 4] = new Vector3 (x, y + 1, z + 1);
-                        vertices[(cubeNumber * 8) + 5] = new Vector3 (x + 1, y + 1, z + 1);
-                        vertices[(cubeNumber * 8) + 6] = new Vector3 (x + 1, y, z + 1);
-                        vertices[(cubeNumber * 8) + 7] = new Vector3 (x, y, z + 1);
+                        vertices[cubeNumber * 24] = new Vector3 (x, y, z);
+                        vertices[(cubeNumber * 24) + 1] = new Vector3 (x + 1, y, z);
+                        vertices[(cubeNumber * 24) + 2] = new Vector3 (x + 1, y + 1, z);
+                        vertices[(cubeNumber * 24) + 3] = new Vector3 (x, y + 1, z);
+                        vertices[(cubeNumber * 24) + 4] = new Vector3 (x, y + 1, z + 1);
+                        vertices[(cubeNumber * 24) + 5] = new Vector3 (x + 1, y + 1, z + 1);
+                        vertices[(cubeNumber * 24) + 6] = new Vector3 (x + 1, y, z + 1);
+                        vertices[(cubeNumber * 24) + 7] = new Vector3 (x, y, z + 1);
                         verticesCount += 8;
                         */
 
@@ -214,59 +215,60 @@ public class WorldGenerator : MonoBehaviour
                         vertices[(cubeNumber * 24) + 21] = new Vector3(0.50f, 0.50f, -0.50f); //21
                         vertices[(cubeNumber * 24) + 22] = new Vector3(0.50f, 0.50f, 0.50f); //22
                         vertices[(cubeNumber * 24) + 23] = new Vector3(0.50f, -0.50f, 0.50f); //23
+                        verticesCount += 24;
 
                         
 
                         
-                        triangles[cubeNumber * 36] = cubeNumber * 8;
-                        triangles[(cubeNumber * 36) + 1] = 1 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 2] = 2 + (cubeNumber * 8);
+                        triangles[cubeNumber * 36] = cubeNumber * 24;
+                        triangles[(cubeNumber * 24) + 1] = 1 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 2] = 2 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 3] = 0 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 4] = 2 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 5] = 3 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 3] = 0 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 4] = 2 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 5] = 3 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 6] = 4 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 7] = 5 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 8] = 6 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 6] = 4 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 7] = 5 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 8] = 6 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 9] = 4 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 10] = 6 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 11] = 7 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 9] = 4 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 10] = 6 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 11] = 7 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 12] = 8 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 13] = 9 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 14] = 10 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 12] = 8 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 13] = 9 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 14] = 10 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 15] = 8 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 16] = 10 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 17] = 11 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 15] = 8 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 16] = 10 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 17] = 11 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 18] = 12 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 19] = 13 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 20] = 14 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 18] = 12 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 19] = 13 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 20] = 14 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 21] = 12 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 22] = 14 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 23] = 15 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 21] = 12 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 22] = 14 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 23] = 15 + (cubeNumber * 24);
                         
-                        triangles[(cubeNumber * 36) + 24] = 16 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 25] = 17 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 26] = 18 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 24] = 16 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 25] = 17 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 26] = 18 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 27] = 16 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 28] = 18 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 29] = 19 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 27] = 16 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 28] = 18 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 29] = 19 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 30] = 20 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 31] = 21 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 32] = 22 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 30] = 20 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 31] = 21 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 32] = 22 + (cubeNumber * 24);
 
-                        triangles[(cubeNumber * 36) + 33] = 20 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 34] = 22 + (cubeNumber * 8);
-                        triangles[(cubeNumber * 36) + 35] = 23 + (cubeNumber * 8);
+                        triangles[(cubeNumber * 24) + 33] = 20 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 34] = 22 + (cubeNumber * 24);
+                        triangles[(cubeNumber * 24) + 35] = 23 + (cubeNumber * 24);
                     
-                        trianglesCount += 36; 
+                        trianglesCount += 24; 
                         
                         
 
