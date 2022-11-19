@@ -186,17 +186,17 @@ public class WorldGenerator : MonoBehaviour
                         */
 
 
-                        , (), (), (), (, (, (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), (), ()
+                        
 
 
-*/
+
                         vertices[(cubeNumber * 24)] = new Vector3(0.50f, -0.50f, 0.50f); //0
                         vertices[(cubeNumber * 24) + 1] = new Vector3(0.50f, 0.50f, 0.50f); //1
                         vertices[(cubeNumber * 24) + 2] = new Vector3(-0.50f, 0.50f, 0.50f); //2
                         vertices[(cubeNumber * 24) + 3] = new Vector3(-0.50f, -0.50f, 0.50f); //3
                         vertices[(cubeNumber * 24) + 4] = new Vector3(0.50f, 0.50f, 0.50f); //4
-                        vertices[(cubeNumber * 24) + 5] = new Vector3(0.50f, 0.50f, -0.50f)); //5
-                        vertices[(cubeNumber * 24) + 6] = new Vector3(-0.50f, 0.50f, -0.50f)); //6
+                        vertices[(cubeNumber * 24) + 5] = new Vector3(0.50f, 0.50f, -0.50f); //5
+                        vertices[(cubeNumber * 24) + 6] = new Vector3(-0.50f, 0.50f, -0.50f); //6
                         vertices[(cubeNumber * 24) + 7] = new Vector3(-0.50f, 0.50f, 0.50f); //7
                         vertices[(cubeNumber * 24) + 8] = new Vector3(0.50f, 0.50f, -0.50f); //8
                         vertices[(cubeNumber * 24) + 9] = new Vector3(0.50f, -0.50f, -0.50f); //9
