@@ -7,7 +7,6 @@ public class MeshInstance
     public int chunkX;
     public int chunkZ;
     public Mesh mesh;
-    Material material;
 
     // Start is called before the first frame update
     void Start()
