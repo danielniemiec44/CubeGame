@@ -170,10 +170,11 @@ public class WorldGenerator : MonoBehaviour
         int noiseMapPosition = 0;
 
 
-        for(int x = 0; x < 16; x++) {
-                for(int z = 0; z < 16; z++) {
-                    for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
-
+        for(int x = 0; x < 1; x++) {
+                for(int z = 0; z < 1; z++) {
+                    for(int y = 0; y < 1; y++) {
+                        //(int) (heightMap[noiseMapPosition] * 10)
+                        
                         /*
                         vertices[cubeNumber * 24] = new Vector3 (x, y, z);
                         vertices[(cubeNumber * 24) + 1] = new Vector3 (x + 1, y, z);
@@ -190,36 +191,39 @@ public class WorldGenerator : MonoBehaviour
                         
 
 
-
-                        vertices[(cubeNumber * 24)] = new Vector3(0.50f, -0.50f, 0.50f); //0
-                        vertices[(cubeNumber * 24) + 1] = new Vector3(0.50f, 0.50f, 0.50f); //1
-                        vertices[(cubeNumber * 24) + 2] = new Vector3(-0.50f, 0.50f, 0.50f); //2
-                        vertices[(cubeNumber * 24) + 3] = new Vector3(-0.50f, -0.50f, 0.50f); //3
-                        vertices[(cubeNumber * 24) + 4] = new Vector3(0.50f, 0.50f, 0.50f); //4
-                        vertices[(cubeNumber * 24) + 5] = new Vector3(0.50f, 0.50f, -0.50f); //5
-                        vertices[(cubeNumber * 24) + 6] = new Vector3(-0.50f, 0.50f, -0.50f); //6
-                        vertices[(cubeNumber * 24) + 7] = new Vector3(-0.50f, 0.50f, 0.50f); //7
-                        vertices[(cubeNumber * 24) + 8] = new Vector3(0.50f, 0.50f, -0.50f); //8
-                        vertices[(cubeNumber * 24) + 9] = new Vector3(0.50f, -0.50f, -0.50f); //9
-                        vertices[(cubeNumber * 24) + 10] = new Vector3(-0.50f, -0.50f, -0.50f); //10
-                        vertices[(cubeNumber * 24) + 11] = new Vector3(-0.50f, 0.50f, -0.50f); //11
-                        vertices[(cubeNumber * 24) + 12] = new Vector3(0.50f, -0.50f, -0.50f); //12
-                        vertices[(cubeNumber * 24) + 13] = new Vector3(0.50f, -0.50f, 0.50f); //13
-                        vertices[(cubeNumber * 24) + 14] = new Vector3(-0.50f, -0.50f, 0.50f); //14
-                        vertices[(cubeNumber * 24) + 15] = new Vector3(-0.50f, -0.50f, -0.50f); //15
-                        vertices[(cubeNumber * 24) + 16] = new Vector3(-0.50f, -0.50f, 0.50f); //16
-                        vertices[(cubeNumber * 24) + 17] = new Vector3(-0.50f, 0.50f, 0.50f); //17
-                        vertices[(cubeNumber * 24) + 18] = new Vector3(-0.50f, 0.50f, -0.50f); //18
-                        vertices[(cubeNumber * 24) + 19] = new Vector3(-0.50f, -0.50f, -0.50f); //19
-                        vertices[(cubeNumber * 24) + 20] = new Vector3(0.50f, -0.50f, -0.50f); //20
-                        vertices[(cubeNumber * 24) + 21] = new Vector3(0.50f, 0.50f, -0.50f); //21
-                        vertices[(cubeNumber * 24) + 22] = new Vector3(0.50f, 0.50f, 0.50f); //22
-                        vertices[(cubeNumber * 24) + 23] = new Vector3(0.50f, -0.50f, 0.50f); //23
+                        //(0.50, -0.50, 0.50), (0.50, 0.50, 0.50), (-0.50, 0.50, 0.50), (-0.50, -0.50, 0.50), (0.50, 0.50, 0.50), (0.50, 0.50, -0.50),
+                        //(-0.50, 0.50, -0.50), (-0.50, 0.50, 0.50), (0.50, 0.50, -0.50), (0.50, -0.50, -0.50), (-0.50, -0.50, -0.50), (-0.50, 0.50, -0.50),
+                        //(0.50, -0.50, -0.50), (0.50, -0.50, 0.50), (-0.50, -0.50, 0.50), (-0.50, -0.50, -0.50), (-0.50, -0.50, 0.50), (-0.50, 0.50, 0.50), 
+                        //(-0.50, 0.50, -0.50), (-0.50, -0.50, -0.50), (0.50, -0.50, -0.50), (0.50, 0.50, -0.50), (0.50, 0.50, 0.50), (0.50, -0.50, 0.50)
+                        vertices[(cubeNumber * 24)] = new Vector3(x + 0.50f,y +  -0.50f,z + 0.50f); //0
+                        vertices[(cubeNumber * 24) + 1] = new Vector3(x + 0.50f,y + 0.50f,z +  0.50f); //1
+                        vertices[(cubeNumber * 24) + 2] = new Vector3(x + -0.50f,y + 0.50f,z +  0.50f); //2
+                        vertices[(cubeNumber * 24) + 3] = new Vector3(x + -0.50f,y + -0.50f,z +  0.50f); //3
+                        vertices[(cubeNumber * 24) + 4] = new Vector3(x + 0.50f,y + 0.50f,z +  0.50f); //4
+                        vertices[(cubeNumber * 24) + 5] = new Vector3(x + 0.50f,y + 0.50f,z +  -0.50f); //5
+                        vertices[(cubeNumber * 24) + 6] = new Vector3(x + -0.50f,y + 0.50f,z +  -0.50f); //6
+                        vertices[(cubeNumber * 24) + 7] = new Vector3(x + -0.50f,y + 0.50f,z +  0.50f); //7
+                        vertices[(cubeNumber * 24) + 8] = new Vector3(x + 0.50f,y + 0.50f,z +  -0.50f); //8
+                        vertices[(cubeNumber * 24) + 9] = new Vector3(x + 0.50f,y + -0.50f,z +  -0.50f); //9
+                        vertices[(cubeNumber * 24) + 10] = new Vector3(x + -0.50f,y + -0.50f,z +  -0.50f); //10
+                        vertices[(cubeNumber * 24) + 11] = new Vector3(x + -0.50f,y + 0.50f,z +  -0.50f); //11
+                        vertices[(cubeNumber * 24) + 12] = new Vector3(x + 0.50f,y + -0.50f,z +  -0.50f); //12
+                        vertices[(cubeNumber * 24) + 13] = new Vector3(x + 0.50f,y + -0.50f,z +  0.50f); //13
+                        vertices[(cubeNumber * 24) + 14] = new Vector3(x + -0.50f,y + -0.50f,z +  0.50f); //14
+                        vertices[(cubeNumber * 24) + 15] = new Vector3(x + -0.50f,y + -0.50f,z +  -0.50f); //15
+                        vertices[(cubeNumber * 24) + 16] = new Vector3(x + -0.50f,y + -0.50f,z +  0.50f); //16
+                        vertices[(cubeNumber * 24) + 17] = new Vector3(x + -0.50f,y + 0.50f,z +  0.50f); //17
+                        vertices[(cubeNumber * 24) + 18] = new Vector3(x + -0.50f,y + 0.50f,z +  -0.50f); //18
+                        vertices[(cubeNumber * 24) + 19] = new Vector3(x + -0.50f,y + -0.50f,z +  -0.50f); //19
+                        vertices[(cubeNumber * 24) + 20] = new Vector3(x + 0.50f,y + -0.50f,z +  -0.50f); //20
+                        vertices[(cubeNumber * 24) + 21] = new Vector3(x + 0.50f,y + 0.50f,z +  -0.50f); //21
+                        vertices[(cubeNumber * 24) + 22] = new Vector3(x + 0.50f,y + 0.50f,z +  0.50f); //22
+                        vertices[(cubeNumber * 24) + 23] = new Vector3(x + 0.50f,y + -0.50f,z +  0.50f); //23
                         verticesCount += 24;
 
                         
 
-                        
+                        //0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23                        
                         triangles[cubeNumber * 36] = cubeNumber * 24;
                         triangles[(cubeNumber * 24) + 1] = 1 + (cubeNumber * 24);
                         triangles[(cubeNumber * 24) + 2] = 2 + (cubeNumber * 24);
