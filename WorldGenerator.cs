@@ -174,7 +174,7 @@ public class WorldGenerator : MonoBehaviour
         int i = 0;
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
-                noiseMap[i] = new Vector2(x + (chunkX * 16) + x, (chunkZ * 16) + z);
+                noiseMap[i] = new Vector2(x + (chunkX * 16), (chunkZ * 16) + z);
                 i++;
             }
         }
@@ -186,65 +186,7 @@ public class WorldGenerator : MonoBehaviour
         int cubeNumber = 0;
         for(int x = 0; x < 16; x++) {
                 for(int z = 0; z < 16; z++) {
-                    for(int y = 0; y < heightMap[noiseMapPosition] * 10; y++) {
-            /*
-                        //normals
-                        //(0.00, 0.00, 1.00), (0.00, 0.00, 1.00), (0.00, 0.00, 1.00), (0.00, 0.00, 1.00), (0.00, 1.00, 0.00), (0.00, 1.00, 0.00),
-                        //(0.00, 1.00, 0.00), (0.00, 1.00, 0.00), (0.00, 0.00, -1.00), (0.00, 0.00, -1.00), (0.00, 0.00, -1.00), (0.00, 0.00, -1.00),
-                        //(0.00, -1.00, 0.00), (0.00, -1.00, 0.00), (0.00, -1.00, 0.00), (0.00, -1.00, 0.00), (-1.00, 0.00, 0.00), (-1.00, 0.00, 0.00),
-                        //(-1.00, 0.00, 0.00), (-1.00, 0.00, 0.00), (1.00, 0.00, 0.00), (1.00, 0.00, 0.00), (1.00, 0.00, 0.00), (1.00, 0.00, 0.00)
-                        normals[(cubeNumber * 36)] = new Vector3(x + 0,y +  0f,z + 1); //0
-                        normals[(cubeNumber * 36) + 1] = new Vector3(x + 0,y + 0,z +  1); //1
-                        normals[(cubeNumber * 36) + 2] = new Vector3(x + 0,y + 0,z +  1); //2
-                        normals[(cubeNumber * 36) + 3] = new Vector3(x + 0,y + 0,z +  1); //3
-                        normals[(cubeNumber * 36) + 4] = new Vector3(x + 0,y + 1,z +  0); //4
-                        normals[(cubeNumber * 36) + 5] = new Vector3(x + 0,y + 1,z +  0); //5
-                        normals[(cubeNumber * 36) + 6] = new Vector3(x + 0,y + 1,z +  0); //6
-                        normals[(cubeNumber * 36) + 7] = new Vector3(x + 0,y + 1,z +  0); //7
-                        normals[(cubeNumber * 36) + 8] = new Vector3(x + 0,y + 0,z +  -1); //8
-                        normals[(cubeNumber * 36) + 9] = new Vector3(x + 0,y + 0,z +  -1); //9
-                        normals[(cubeNumber * 36) + 10] = new Vector3(x + 0,y + 0,z +  -1); //10
-                        normals[(cubeNumber * 36) + 11] = new Vector3(x + 0,y + 0,z +  -1); //11
-                        normals[(cubeNumber * 36) + 12] = new Vector3(x + 0,y + -1,z +  0); //12
-                        normals[(cubeNumber * 36) + 13] = new Vector3(x + 0,y + -1,z +  0); //13
-                        normals[(cubeNumber * 36) + 14] = new Vector3(x + 0,y + -1,z +  0); //14
-                        normals[(cubeNumber * 36) + 15] = new Vector3(x + 0,y + -1,z + 0); //15
-                        normals[(cubeNumber * 36) + 16] = new Vector3(x + -1,y + 0,z + 0); //16
-                        normals[(cubeNumber * 36) + 17] = new Vector3(x + -1,y + 0,z +  0); //17
-                        normals[(cubeNumber * 36) + 18] = new Vector3(x + -1,y + 0,z +  0); //18
-                        normals[(cubeNumber * 36) + 19] = new Vector3(x + -1,y + 0,z +  0); //19
-                        normals[(cubeNumber * 36) + 20] = new Vector3(x + 1,y + 0,z + 0); //20
-                        normals[(cubeNumber * 36) + 21] = new Vector3(x + 1,y + 0,z + 0); //21
-                        normals[(cubeNumber * 36) + 22] = new Vector3(x + 1,y + 0,z + 0); //22
-                        normals[(cubeNumber * 36) + 23] = new Vector3(x + 1,y + 0,z + 0); //23
-                        normalsCount += 24;
-                        
-
-                        cubeNumber++;
-                        cubesCountTotal++;
-
-
-
-                        //cube uv
-                        //(0.00, 0.00), (0.00, 1.00), (1.00, 1.00), (1.00, 0.00), (0.00, 0.00), (0.00, 1.00),
-                        //(1.00, 1.00), (1.00, 0.00), (0.00, 0.00), (0.00, 1.00), (1.00, 1.00), (1.00, 0.00),
-                        //(0.00, 0.00), (0.00, 1.00), (1.00, 1.00), (1.00, 0.00), (0.00, 0.00), (0.00, 1.00),
-                        //(1.00, 1.00), (1.00, 0.00), (0.00, 0.00), (0.00, 1.00), (1.00, 1.00), (1.00, 0.00)
-                        
-
-                        
-                    }
-                    noiseMapPosition++;
-                }
-            }
-                
-            //Mesh mesh = meshFilter.mesh;
-            //mesh.Clear ();
-            */
-
-
-            
-
+                    for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
             vertices[cubeNumber * 14] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
             vertices[(cubeNumber * 14) + 2] = new Vector3(x + 1, y + 1, z + 0);
