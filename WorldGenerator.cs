@@ -184,9 +184,9 @@ public class WorldGenerator : MonoBehaviour
 
         int noiseMapPosition = 0;
         int cubeNumber = 0;
-        for(int x = 0; x < 1; x++) {
-                for(int z = 0; z < 1; z++) {
-                    for(int y = 0; y < 1; y++) {
+        for(int x = 0; x < 16; x++) {
+                for(int z = 0; z < 16; z++) {
+                    for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
                         //(int) (heightMap[noiseMapPosition] * 10)
             vertices[cubeNumber * 14] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
@@ -233,32 +233,58 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 17] = 7 + (cubeNumber * 14);
 
             triangles[(cubeNumber * 36) + 18] = 6 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 19] = 8 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 20] = 7 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 19] = 7 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 20] = 8 + (cubeNumber * 14);
 
             triangles[(cubeNumber * 36) + 21] = 7 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 22] = 8 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 23] = 9 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 22] = 9 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 23] = 8 + (cubeNumber * 14);
             
-            triangles[(cubeNumber * 36) + 24] = 12 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 25] = 13 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 26] = 3 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 24] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 25] = 11 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 26] = 10 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 27] = 3 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 28] = 13 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 29] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 27] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 28] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 29] = 11 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 30] = 10 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 31] = 11 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 32] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 30] = 3 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 31] = 12 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 32] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 33] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 34] = 11 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 35] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 33] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 34] = 12 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 35] = 13 + (cubeNumber * 14);
         
             trianglesCount += 36;
 
 
+
+            normals[(cubeNumber * 24)] = new Vector3(x + 0,y +  0f,z + 1); //0
+            normals[(cubeNumber * 24) + 1] = new Vector3(x + 0,y + 0,z +  1); //1
+            normals[(cubeNumber * 24) + 2] = new Vector3(x + 0,y + 0,z +  1); //2
+            normals[(cubeNumber * 24) + 3] = new Vector3(x + 0,y + 0,z +  1); //3
+            normals[(cubeNumber * 24) + 4] = new Vector3(x + 0,y + 1,z +  0); //4
+            normals[(cubeNumber * 24) + 5] = new Vector3(x + 0,y + 1,z +  0); //5
+            normals[(cubeNumber * 24) + 6] = new Vector3(x + 0,y + 1,z +  0); //6
+            normals[(cubeNumber * 24) + 7] = new Vector3(x + 0,y + 1,z +  0); //7
+            normals[(cubeNumber * 24) + 8] = new Vector3(x + 0,y + 0,z +  -1); //8
+            normals[(cubeNumber * 24) + 9] = new Vector3(x + 0,y + 0,z +  -1); //9
+            normals[(cubeNumber * 24) + 10] = new Vector3(x + 0,y + 0,z +  -1); //10
+            normals[(cubeNumber * 24) + 11] = new Vector3(x + 0,y + 0,z +  -1); //11
+            normals[(cubeNumber * 24) + 12] = new Vector3(x + 0,y + -1,z +  0); //12
+            normals[(cubeNumber * 24) + 13] = new Vector3(x + 0,y + -1,z +  0); //13
+            normals[(cubeNumber * 24) + 14] = new Vector3(x + 0,y + -1,z +  0); //14
+            normals[(cubeNumber * 24) + 15] = new Vector3(x + 0,y + -1,z + 0); //15
+            normals[(cubeNumber * 24) + 16] = new Vector3(x + -1,y + 0,z + 0); //16
+            normals[(cubeNumber * 24) + 17] = new Vector3(x + -1,y + 0,z +  0); //17
+            normals[(cubeNumber * 24) + 18] = new Vector3(x + -1,y + 0,z +  0); //18
+            normals[(cubeNumber * 24) + 19] = new Vector3(x + -1,y + 0,z +  0); //19
+            normals[(cubeNumber * 24) + 20] = new Vector3(x + 1,y + 0,z + 0); //20
+            normals[(cubeNumber * 24) + 21] = new Vector3(x + 1,y + 0,z + 0); //21
+            normals[(cubeNumber * 24) + 22] = new Vector3(x + 1,y + 0,z + 0); //22
+            normals[(cubeNumber * 24) + 23] = new Vector3(x + 1,y + 0,z + 0); //23
+            normalsCount += 24;
 
 
 
