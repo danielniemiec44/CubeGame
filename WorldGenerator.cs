@@ -184,9 +184,10 @@ public class WorldGenerator : MonoBehaviour
 
         int noiseMapPosition = 0;
         int cubeNumber = 0;
-        for(int x = 0; x < 16; x++) {
-                for(int z = 0; z < 16; z++) {
-                    for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
+        for(int x = 0; x < 1; x++) {
+                for(int z = 0; z < 1; z++) {
+                    for(int y = 0; y < 1; y++) {
+                        //(int) (heightMap[noiseMapPosition] * 10)
             vertices[cubeNumber * 14] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
             vertices[(cubeNumber * 14) + 2] = new Vector3(x + 1, y + 1, z + 0);
@@ -208,52 +209,52 @@ public class WorldGenerator : MonoBehaviour
 
 
             triangles[cubeNumber * 36] = cubeNumber * 14;
-            triangles[(cubeNumber * 36) + 1] = 2 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 2] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 1] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 2] = 2 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 3] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 4] = 2 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 3] = 2 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 4] = 1 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 5] = 3 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 6] = 4 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 7] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 8] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 6] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 7] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 8] = 3 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 9] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 10] = 7 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 11] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 9] = 3 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 10] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 11] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 12] = 6 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 13] = 7 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 14] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 12] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 13] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 14] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 15] = 7 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 16] = 9 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 17] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 15] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 16] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 17] = 7 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 18] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 19] = 3 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 20] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 18] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 19] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 20] = 7 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 21] = 3 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 22] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 23] = 4 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 21] = 7 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 22] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 23] = 9 + (cubeNumber * 14);
             
-            triangles[(cubeNumber * 36) + 24] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 25] = 11 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 26] = 10 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 24] = 12 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 25] = 13 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 26] = 3 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 27] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 28] = 4 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 29] = 11 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 27] = 3 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 28] = 13 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 29] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 30] = 3 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 31] = 12 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 32] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 30] = 10 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 31] = 11 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 32] = 1 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 33] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 34] = 12 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 35] = 13 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 33] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 34] = 11 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 35] = 4 + (cubeNumber * 14);
         
             trianglesCount += 36;
 
