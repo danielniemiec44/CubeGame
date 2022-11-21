@@ -157,11 +157,11 @@ public class WorldGenerator : MonoBehaviour
 
         Vector3[] vertices = new Vector3[600000];
         int[] triangles = new int[600000];
-        //Vector3[] normals = new Vector3[600000];
+        Vector3[] normals = new Vector3[600000];
         Vector2[] uv = new Vector2[600000];
         int verticesCount = 0;
         int trianglesCount = 0;
-        //int normalsCount = 0;
+        int normalsCount = 0;
         int uvCount = 0;
 
         //int cubeNumber = 0;
@@ -196,7 +196,6 @@ public class WorldGenerator : MonoBehaviour
             vertices[(cubeNumber * 14) + 6] = new Vector3(x + 0, y + 1, z + 1);
             vertices[(cubeNumber * 14) + 7] = new Vector3(x + 1, y + 1, z + 1);
 
-
             vertices[(cubeNumber * 14) + 8] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 9] = new Vector3(x + 1, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 10] = new Vector3(x + 0, y + 1, z + 0);
@@ -204,6 +203,8 @@ public class WorldGenerator : MonoBehaviour
             vertices[(cubeNumber * 14) + 12] = new Vector3(x + 1, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 13] = new Vector3(x + 1, y + 1, z + 1);
             verticesCount += 14;
+
+
 
 
             triangles[cubeNumber * 36] = cubeNumber * 14;
@@ -257,6 +258,16 @@ public class WorldGenerator : MonoBehaviour
             trianglesCount += 36;
 
 
+
+
+
+            
+
+
+
+
+
+
             uv[(cubeNumber * 14)] = new Vector2(x + 0, z + 0.66f); //0
             uv[(cubeNumber * 14) + 1] = new Vector2(x + 0.25f, z + 0.66f); //1
             uv[(cubeNumber * 14) + 2] = new Vector2(x + 0, z + 0.33f); //2
@@ -284,12 +295,12 @@ public class WorldGenerator : MonoBehaviour
         }
         Array.Resize(ref vertices, verticesCount);
         Array.Resize(ref triangles, trianglesCount);
-        //Array.Resize(ref normals, normalsCount);
+        Array.Resize(ref normals, normalsCount);
         Array.Resize(ref uv, uvCount);
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        //mesh.normals = normals;
+        mesh.normals = vertices;
         mesh.uv = uv;
         mesh.Optimize ();
 		mesh.RecalculateNormals ();
