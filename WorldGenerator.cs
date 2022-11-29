@@ -33,7 +33,7 @@ public class WorldGenerator : MonoBehaviour
 
     Mesh cubeMesh;
     RenderParams rp;
-    int renderDistance = 8;
+    int renderDistance = 2;
 
     //Vector3[] cubeVertices;
     //int[] cubeTriangles;
@@ -77,8 +77,8 @@ public class WorldGenerator : MonoBehaviour
         canvas = GameObject.Find("Canvas");
         menu = canvas.GetComponent<Menu>();
         
-        for(int x = -4; x < 4; x++) {
-            for(int z = -4; z < 4; z++) {
+        for(int x = renderDistance; x < renderDistance; x++) {
+            for(int z = renderDistance; z < renderDistance; z++) {
                 GenerateChunk(x, z);
             }
         }
@@ -86,15 +86,6 @@ public class WorldGenerator : MonoBehaviour
         player.transform.position = new Vector3(0, 20, 0);
         
         menu.hideBackground();
-
-
-        for(int x = -8; x < 8; x++) {
-            for(int z = -8; z < 8; z++) {
-                if(!chunksLoaded.Contains(new Vector2(x, z))) {
-                    chunksQueued.Enqueue(new Vector2(x, z));
-                }
-            }
-        }
         
     }
 
@@ -116,18 +107,14 @@ public class WorldGenerator : MonoBehaviour
         int playerChunkZ = (int) (player.transform.position.z / 16);
 
         
-        for(int renderIndex = 1; renderIndex <= renderDistance; renderIndex++) {
-        for(int x = playerChunkX - renderIndex; x < playerChunkX + renderIndex; x++) {
-            for(int z = playerChunkZ - renderIndex; z < playerChunkZ + renderIndex; z++) {
+        for(int x = playerChunkX - renderDistance; x < playerChunkX + renderDistance; x++) {
+            for(int z = playerChunkZ - renderDistance; z < playerChunkZ + renderDistance; z++) {
                 Vector2 chunk = new Vector2(x, z);
                 if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
                     chunksQueued.Enqueue(new Vector2(x, z));
                 }
             }
         }
-
-            
-            }
             
 
 
