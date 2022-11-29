@@ -27,12 +27,14 @@ public class WorldGenerator : MonoBehaviour
     int framesBehind = 0;
 
     public Material material;
+    public Material material2;
     
     MeshInstance[] meshList;
     int meshCount = 0;
 
     Mesh cubeMesh;
     RenderParams rp;
+    RenderParams rp2;
     int renderDistance = 2;
 
     //Vector3[] cubeVertices;
@@ -48,6 +50,7 @@ public class WorldGenerator : MonoBehaviour
     void Start()
     {
         rp = new RenderParams(material);
+        rp2 = new RenderParams(material2);
         meshList = new MeshInstance[6000];
 
 
@@ -137,7 +140,11 @@ public class WorldGenerator : MonoBehaviour
                 int cubesCount = meshInstance.cubesCount;
                 for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
                 //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                    Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                    if(meshIndex % 2 == 0) {
+                        Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                    } else {
+                        Graphics.RenderMesh(rp2, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                    }
                 }
             }
         //}
@@ -206,7 +213,7 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-            triangles[cubeNumber * 36] = cubeNumber * 14;
+            triangles[(cubeNumber * 36) + 0] = 0 + cubeNumber * 14;
             triangles[(cubeNumber * 36) + 1] = 1 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 2] = 2 + (cubeNumber * 14);
 
@@ -234,9 +241,9 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 19] = 7 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 20] = 8 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 21] = 7 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 22] = 9 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 23] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 21] = 8 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 22] = 7 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 23] = 9 + (cubeNumber * 14);
             
             triangles[(cubeNumber * 36) + 24] = 1 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 25] = 11 + (cubeNumber * 14);
