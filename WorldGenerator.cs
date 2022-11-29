@@ -32,6 +32,7 @@ public class WorldGenerator : MonoBehaviour
 
     Mesh cubeMesh;
     RenderParams rp;
+    int renderDistance = 8;
 
     //Vector3[] cubeVertices;
     //int[] cubeTriangles;
@@ -89,6 +90,7 @@ public class WorldGenerator : MonoBehaviour
         
         menu.hideBackground();
 
+
         for(int x = -8; x < 8; x++) {
             for(int z = -8; z < 8; z++) {
                 if(!chunksLoaded.Contains(new Vector2(x, z))) {
@@ -116,13 +118,16 @@ public class WorldGenerator : MonoBehaviour
         int playerChunkX = (int) (player.transform.position.x / 16);
         int playerChunkZ = (int) (player.transform.position.z / 16);
 
-        for(int x = playerChunkX -16; x < playerChunkX + 16; x++) {
-            for(int z = playerChunkZ -16; z < playerChunkZ + 16; z++) {
+        
+        for(int renderIndex = 1; renderIndex <= renderDistance; renderIndex++) {
+        for(int x = playerChunkX - renderIndex; x < playerChunkX + renderIndex; x++) {
+            for(int z = playerChunkZ - renderIndex; z < playerChunkZ + renderIndex; z++) {
                 Vector2 chunk = new Vector2(x, z);
                 if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
                     chunksQueued.Enqueue(new Vector2(x, z));
                 }
             }
+        }
 
             
             }
@@ -143,6 +148,9 @@ public class WorldGenerator : MonoBehaviour
         
         
         foreach(MeshInstance meshInstance in meshList) {
+            //for(int meshIndex = 0; meshIndex < meshInstance.cubesCount; meshIndex++) {
+             //       Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+              //  }
             Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
         }
     }
@@ -161,7 +169,6 @@ public class WorldGenerator : MonoBehaviour
         Vector2[] uv = new Vector2[600000];
         int verticesCount = 0;
         int trianglesCount = 0;
-        int normalsCount = 0;
         int uvCount = 0;
 
         //int cubeNumber = 0;
@@ -169,6 +176,8 @@ public class WorldGenerator : MonoBehaviour
         //MeshFilter meshFilter = chunk.GetComponent<MeshFilter> ();
         //Renderer renderer = chunk.GetComponent<Renderer>();
         MeshCollider meshCollider = chunk.GetComponent<MeshCollider>();
+
+        Mesh mesh = new Mesh();
 
         Vector2[] noiseMap = new Vector2[600000];
         int i = 0;
@@ -260,34 +269,6 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-            normals[(cubeNumber * 24)] = new Vector3(x + 0,y +  0f,z + 1); //0
-            normals[(cubeNumber * 24) + 1] = new Vector3(x + 0,y + 0,z +  1); //1
-            normals[(cubeNumber * 24) + 2] = new Vector3(x + 0,y + 0,z +  1); //2
-            normals[(cubeNumber * 24) + 3] = new Vector3(x + 0,y + 0,z +  1); //3
-            normals[(cubeNumber * 24) + 4] = new Vector3(x + 0,y + 1,z +  0); //4
-            normals[(cubeNumber * 24) + 5] = new Vector3(x + 0,y + 1,z +  0); //5
-            normals[(cubeNumber * 24) + 6] = new Vector3(x + 0,y + 1,z +  0); //6
-            normals[(cubeNumber * 24) + 7] = new Vector3(x + 0,y + 1,z +  0); //7
-            normals[(cubeNumber * 24) + 8] = new Vector3(x + 0,y + 0,z +  -1); //8
-            normals[(cubeNumber * 24) + 9] = new Vector3(x + 0,y + 0,z +  -1); //9
-            normals[(cubeNumber * 24) + 10] = new Vector3(x + 0,y + 0,z +  -1); //10
-            normals[(cubeNumber * 24) + 11] = new Vector3(x + 0,y + 0,z +  -1); //11
-            normals[(cubeNumber * 24) + 12] = new Vector3(x + 0,y + -1,z +  0); //12
-            normals[(cubeNumber * 24) + 13] = new Vector3(x + 0,y + -1,z +  0); //13
-            normals[(cubeNumber * 24) + 14] = new Vector3(x + 0,y + -1,z +  0); //14
-            normals[(cubeNumber * 24) + 15] = new Vector3(x + 0,y + -1,z + 0); //15
-            normals[(cubeNumber * 24) + 16] = new Vector3(x + -1,y + 0,z + 0); //16
-            normals[(cubeNumber * 24) + 17] = new Vector3(x + -1,y + 0,z +  0); //17
-            normals[(cubeNumber * 24) + 18] = new Vector3(x + -1,y + 0,z +  0); //18
-            normals[(cubeNumber * 24) + 19] = new Vector3(x + -1,y + 0,z +  0); //19
-            normals[(cubeNumber * 24) + 20] = new Vector3(x + 1,y + 0,z + 0); //20
-            normals[(cubeNumber * 24) + 21] = new Vector3(x + 1,y + 0,z + 0); //21
-            normals[(cubeNumber * 24) + 22] = new Vector3(x + 1,y + 0,z + 0); //22
-            normals[(cubeNumber * 24) + 23] = new Vector3(x + 1,y + 0,z + 0); //23
-            normalsCount += 24;
-
-
-
             
 
 
@@ -314,6 +295,7 @@ public class WorldGenerator : MonoBehaviour
 
             cubeNumber++;
             cubesCountTotal++;
+            mesh.subMeshCount++;
             
 
                 }
@@ -322,11 +304,23 @@ public class WorldGenerator : MonoBehaviour
         }
         Array.Resize(ref vertices, verticesCount);
         Array.Resize(ref triangles, trianglesCount);
-        Array.Resize(ref normals, normalsCount);
         Array.Resize(ref uv, uvCount);
-        Mesh mesh = new Mesh();
         mesh.vertices = vertices;
-        mesh.triangles = triangles;
+        for(int triangleNumber = 0; triangleNumber < (triangles.Length / 36 / 4); triangleNumber++) {
+            mesh.SetTriangles(triangles, triangleNumber * 36, (triangleNumber + 1) * 36, triangleNumber);
+        }
+
+
+        //mesh.triangles = triangles;
+
+
+
+        //mesh.SetTriangles(triangles, 0, 36, 0);
+        //mesh.SetTriangles(triangles, 36, 72, 1);
+        //mesh.SetTriangles(triangles, 72, 108, 2);
+        //mesh.SetTriangles(triangles, 108, 144, 3);
+        
+        //mesh.SetTriangles(triangles, 36, 72, 1);
         mesh.normals = vertices;
         mesh.uv = uv;
         mesh.Optimize ();
@@ -335,7 +329,7 @@ public class WorldGenerator : MonoBehaviour
         meshCollider.sharedMesh = mesh;
         //GetComponent<Renderer>().material.mainTexture = texture;
 
-        meshList.Add(new MeshInstance(mesh, chunkX, chunkZ));
+        meshList.Add(new MeshInstance(mesh, chunkX, chunkZ, cubeNumber));
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
         //Debug.Log("Loaded chunk: " + chunkX + ", " + chunkZ + "\nChunks Queued: " + chunksQueued.Count);

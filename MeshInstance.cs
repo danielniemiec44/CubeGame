@@ -7,6 +7,7 @@ public class MeshInstance
     public int chunkX;
     public int chunkZ;
     public Mesh mesh;
+    public int cubesCount;
 
     // Start is called before the first frame update
     void Start()
@@ -20,9 +21,10 @@ public class MeshInstance
         
     }
 
-    public MeshInstance(Mesh mesh, int chunkX, int chunkZ) {
+    public MeshInstance(Mesh mesh, int chunkX, int chunkZ, int cubesCount) {
         this.mesh = mesh;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
+        this.cubesCount = cubesCount;
     }
 }

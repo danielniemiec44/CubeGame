@@ -26,7 +26,18 @@ public class Menu : MonoBehaviour
     public int HotBarFocus = 0;
     
     public GameObject HotBar;
+    public GameObject Inventory;
 
+    public bool isPlayerInTheGame = false;
+
+    GameObject player;
+
+    FirstPersonMovement movementComponent;
+    Jump jumpComponent;
+    Crouch crouchComponent;
+
+    GameObject firstPersonCamera;
+    FirstPersonLook firstPersonLookComponent;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +54,7 @@ public class Menu : MonoBehaviour
         GUI.SetActive(false);
         crosshair.SetActive(false);
         DebugScreen.SetActive(false);
+        Inventory.SetActive(false);
 
 
         GameObject instantiatedWorldButton = Instantiate(worldButton, new Vector3(0, 0, 0), new Quaternion(), singlePlayerView.transform);
@@ -54,11 +66,37 @@ public class Menu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f ) {
-            HotBarChange(false);
-        }
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f ) {
-            HotBarChange(true);
+        if(isPlayerInTheGame) {
+            if(player != null && movementComponent != null && jumpComponent != null && crouchComponent != null) {
+            movementComponent.enabled = true;
+            jumpComponent.enabled = true;
+            crouchComponent.enabled = true;
+            } else {
+                assignComponents();
+            }
+
+            if (Input.GetAxis("Mouse ScrollWheel") > 0f ) {
+                HotBarChange(false);
+            }
+            if (Input.GetAxis("Mouse ScrollWheel") < 0f ) {
+                HotBarChange(true);
+            }
+
+            if(Input.GetKeyDown(KeyCode.E)) {
+                InventoryStateChange(true);
+            }
+        } else {
+            if(player != null && movementComponent != null && jumpComponent != null && crouchComponent != null) {
+                movementComponent.enabled = false;
+                jumpComponent.enabled = false;
+                crouchComponent.enabled = false;
+            } else {
+                assignComponents();
+            }
+
+        if(Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Escape)) {
+            InventoryStateChange(false);
+            }
         }
     }
 
@@ -74,6 +112,7 @@ public class Menu : MonoBehaviour
         mainScreen.SetActive(false);
         background.SetActive(true);
         SceneManager.LoadScene("World");
+        
     }
 
     public void hideBackground() {
@@ -81,6 +120,7 @@ public class Menu : MonoBehaviour
         GUI.SetActive(true);
         crosshair.SetActive(true);
         DebugScreen.SetActive(true);
+        isPlayerInTheGame = true;
     }
 
     public void HotBarChange(bool right) {
@@ -105,6 +145,37 @@ public class Menu : MonoBehaviour
                 transform.gameObject.GetComponent<Outline>().enabled = false;
             }
             index++;
+        }
+    }
+
+
+    public void assignComponents() {
+        try {
+            player = GameObject.Find("Player"); 
+            movementComponent = player.GetComponent<FirstPersonMovement>();
+            jumpComponent = player.GetComponent<Jump>();
+            crouchComponent = player.GetComponent<Crouch>();
+        } catch {
+            player = null;
+            movementComponent = null;
+            jumpComponent = null;
+            crouchComponent = null;
+        }
+    }
+
+    public void InventoryStateChange(bool open) {
+        if(open) {
+            if(!Inventory.activeSelf) {
+                Inventory.SetActive(true);
+                isPlayerInTheGame = false;
+                Cursor.lockState = CursorLockMode.None;
+            }
+        } else {
+            if(Inventory.activeSelf) {
+                Inventory.SetActive(false);
+                isPlayerInTheGame = true;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
     }
 }
