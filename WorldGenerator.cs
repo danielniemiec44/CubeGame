@@ -28,7 +28,8 @@ public class WorldGenerator : MonoBehaviour
 
     public Material material;
     
-    List<MeshInstance> meshList;
+    MeshInstance[] meshList;
+    int meshCount = 0;
 
     Mesh cubeMesh;
     RenderParams rp;
@@ -47,6 +48,8 @@ public class WorldGenerator : MonoBehaviour
     void Start()
     {
         rp = new RenderParams(material);
+        meshList = new MeshInstance[6000];
+
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = new Vector3(0, 0, 0);
@@ -68,12 +71,6 @@ public class WorldGenerator : MonoBehaviour
 
         //cube.GetComponent<Renderer>().material = material;
         Destroy(cube);
-
-
-
-
-
-        meshList = new List<MeshInstance>();
 
         chunksLoaded = new List<Vector2>();
         chunksQueued = new Queue<Vector2>();
@@ -147,12 +144,16 @@ public class WorldGenerator : MonoBehaviour
 
         
         
-        foreach(MeshInstance meshInstance in meshList) {
-            //for(int meshIndex = 0; meshIndex < meshInstance.cubesCount; meshIndex++) {
-             //       Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-              //  }
-            Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-        }
+        //foreach(MeshInstance meshInstance in meshList) {
+            for(int i = 0; i < meshCount; i++){
+                MeshInstance meshInstance = meshList[i];
+                int cubesCount = meshInstance.cubesCount;
+                for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
+                //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+                    Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                }
+            }
+        //}
     }
 
 
@@ -195,7 +196,8 @@ public class WorldGenerator : MonoBehaviour
         int cubeNumber = 0;
         for(int x = 0; x < 16; x++) {
                 for(int z = 0; z < 16; z++) {
-                    for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
+                    //for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
+                    int y = (int) (heightMap[noiseMapPosition] * 10);
                         //(int) (heightMap[noiseMapPosition] * 10)
             vertices[cubeNumber * 14] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
@@ -298,7 +300,7 @@ public class WorldGenerator : MonoBehaviour
             mesh.subMeshCount++;
             
 
-                }
+                //}
                 noiseMapPosition++;
             }
         }
@@ -306,7 +308,7 @@ public class WorldGenerator : MonoBehaviour
         Array.Resize(ref triangles, trianglesCount);
         Array.Resize(ref uv, uvCount);
         mesh.vertices = vertices;
-        for(int triangleNumber = 0; triangleNumber < (triangles.Length / 36 / 4); triangleNumber++) {
+        for(int triangleNumber = 0; triangleNumber < (triangles.Length / 72); triangleNumber++) {
             mesh.SetTriangles(triangles, triangleNumber * 36, (triangleNumber + 1) * 36, triangleNumber);
         }
 
@@ -329,7 +331,8 @@ public class WorldGenerator : MonoBehaviour
         meshCollider.sharedMesh = mesh;
         //GetComponent<Renderer>().material.mainTexture = texture;
 
-        meshList.Add(new MeshInstance(mesh, chunkX, chunkZ, cubeNumber));
+        meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ, cubeNumber);
+        meshCount++;
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
         //Debug.Log("Loaded chunk: " + chunkX + ", " + chunkZ + "\nChunks Queued: " + chunksQueued.Count);
