@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+public enum Heading
+{
+    North,
+    East,
+    South,
+    West
+}
+
 public class WorldGenerator : MonoBehaviour
 {
     public Texture texture;
@@ -43,6 +51,15 @@ public class WorldGenerator : MonoBehaviour
     //int cubeTrianglesCount;
 
 
+    [Header("Debug")]
+    [SerializeField] [Range(0f, 360f)] private float northHeading;
+
+    [Header("OutputValues")]
+    [SerializeField] private float myHeading;
+    [SerializeField] private float dif;
+    [SerializeField] private Heading heading;
+
+
 
 
 
@@ -80,8 +97,8 @@ public class WorldGenerator : MonoBehaviour
         canvas = GameObject.Find("Canvas");
         menu = canvas.GetComponent<Menu>();
         
-        for(int x = renderDistance; x < renderDistance; x++) {
-            for(int z = renderDistance; z < renderDistance; z++) {
+        for(int x = -2; x < 2; x++) {
+            for(int z = -2; z < 2; z++) {
                 GenerateChunk(x, z);
             }
         }
@@ -132,23 +149,92 @@ public class WorldGenerator : MonoBehaviour
 
 
 
+
+
+
+
+
+        // only use the Y component of the objects orientation
+        // always returns a value between 0 and 360
+        myHeading = player.transform.eulerAngles.y;
+        // also this is always a value between 0 and 360
+        northHeading = Input.compass.magneticHeading;
+
+        dif = myHeading - northHeading;
+        // wrap the value so it is always between 0 and 360
+        if (dif < 0) dif += 360f;
+
+        if (dif > 45 && dif <= 135)
+        {
+            heading = Heading.East;
+        }
+        else if (dif > 135 && dif <= 225)
+        {
+            heading = Heading.South;
+        }
+        else if (dif > 225 && dif <= 315)
+        {
+            heading = Heading.West;
+        }
+        else
+        {
+            heading = Heading.North;
+        }
+
+
+
+
+
+
+
+
+
+
         
         
         //foreach(MeshInstance meshInstance in meshList) {
             for(int i = 0; i < meshCount; i++){
+                if(heading == Heading.East) {
                 MeshInstance meshInstance = meshList[i];
-                int cubesCount = meshInstance.cubesCount;
-                for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
-                //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                    if(meshIndex % 2 == 0) {
-                        Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-                    } else {
-                        Graphics.RenderMesh(rp2, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                    if(meshInstance.chunkX + 1 >= playerChunkX && meshInstance.chunkX < playerChunkX + renderDistance) {
+                        int cubesCount = meshInstance.cubesCount;
+                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
+                        //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                        }
+                    }
+                } else if(heading == Heading.West) {
+                MeshInstance meshInstance = meshList[i];
+                    if(meshInstance.chunkX - 1 <= playerChunkX && meshInstance.chunkX < playerChunkX + renderDistance) {
+                        int cubesCount = meshInstance.cubesCount;
+                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
+                        //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                        }
+                    }
+                } else if(heading == Heading.North) {
+                MeshInstance meshInstance = meshList[i];
+                    if(meshInstance.chunkZ + 1 >= playerChunkZ && meshInstance.chunkZ < playerChunkZ + renderDistance) {
+                        int cubesCount = meshInstance.cubesCount;
+                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
+                        //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                        }
+                    }
+                } else if(heading == Heading.South) {
+                MeshInstance meshInstance = meshList[i];
+                    if(meshInstance.chunkZ - 1 <= playerChunkZ && meshInstance.chunkZ < playerChunkZ + renderDistance) {
+                        int cubesCount = meshInstance.cubesCount;
+                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
+                        //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
+                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                        }
                     }
                 }
             }
+            
         //}
-    }
+            }
 
 
 
