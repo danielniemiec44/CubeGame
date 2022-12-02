@@ -13,8 +13,8 @@ public class DebugScreen : MonoBehaviour
     public TextMeshProUGUI leftSideText;
     int[] frames;
     int framesBehind = 0;
-    int maxFramesBehind = 50;
-    int avgFrames = 0;
+    int maxFramesBehind = 10;
+    public int avgFrames = 0;
 
     // Start is called before the first frame update
     void Start()
