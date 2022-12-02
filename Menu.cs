@@ -38,6 +38,10 @@ public class Menu : MonoBehaviour
 
     GameObject firstPersonCamera;
     FirstPersonLook firstPersonLookComponent;
+    public GameObject materials;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +51,7 @@ public class Menu : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(eventSystem);
+        DontDestroyOnLoad(materials);
 
         darker.SetActive(false);
         background.SetActive(false);

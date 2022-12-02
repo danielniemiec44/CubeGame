@@ -104,6 +104,9 @@ public class Interact : MonoBehaviour
     void Update()
     {
         highlightPosition = checkLookingAt();
+        if (Input.GetMouseButtonDown(0)) {
+            WorldGenerator.removeBlock(highlightPosition);
+        }
     }
 
     public Vector3 checkLookingAt() {

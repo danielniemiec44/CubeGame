@@ -42,7 +42,6 @@ public class WorldGenerator : MonoBehaviour
 
     Mesh cubeMesh;
     RenderParams rp;
-    RenderParams rp2;
     int renderDistance = 2;
 
     //Vector3[] cubeVertices;
@@ -59,6 +58,8 @@ public class WorldGenerator : MonoBehaviour
     [SerializeField] private float dif;
     [SerializeField] private Heading heading;
 
+    public MaterialConstructor materialConstructor;
+
 
 
 
@@ -66,8 +67,7 @@ public class WorldGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rp = new RenderParams(material);
-        rp2 = new RenderParams(material2);
+        
         meshList = new MeshInstance[6000];
 
 
@@ -106,6 +106,9 @@ public class WorldGenerator : MonoBehaviour
         player.transform.position = new Vector3(0, 20, 0);
         
         menu.hideBackground();
+        
+        materialConstructor = GameObject.Find("Materials").GetComponent<MaterialConstructor>();
+        rp = new RenderParams(materialConstructor.materials[0]);
         
     }
 
@@ -421,6 +424,11 @@ public class WorldGenerator : MonoBehaviour
 
     float[] CalculateHeights(Vector2[] map) {
         return NoiseS3D.NoiseArrayGPU(map, 0.01f, true);
+    }
+
+
+    public static void removeBlock(Vector3 block) {
+        
     }
 
 
