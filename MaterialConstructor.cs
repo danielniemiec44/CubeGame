@@ -53,7 +53,11 @@ public Texture2D texturePreview;
                     for(int y = 0; y < texture2.height; y++){
                         //texture2Colored.SetPixel(x, y, Color.Lerp(texture2.GetPixel(x, y), greenColor, Mathf.PingPong(Time.time, 1)));
                         Color color = texture2.GetPixel(x, y);
-                        texture2Colored.SetPixel(x, y, Color.Lerp(color, Color.green, 0.2f));
+                        float h;
+                        float s;
+                        float v;
+                        Color.RGBToHSV(color, out h, out s, out v);
+                        texture2Colored.SetPixel(x, y, Color.HSVToRGB(78.0f / 360, 55.0f / 100, v));
                     }
                 }
                 texture2Colored.Apply(false);
