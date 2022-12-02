@@ -87,7 +87,7 @@ public class WorldGenerator : MonoBehaviour
         //Debug.Log(String.Join(", ", cubeVertices));
         //Debug.Log(String.Join(", ", cubeTriangles));
         //Debug.Log(String.Join(", ", cubeNormals));
-        Debug.Log(String.Join(", ", cubeUv));
+        //Debug.Log(String.Join(", ", cubeUv));
 
         //cube.GetComponent<Renderer>().material = material;
         Destroy(cube);

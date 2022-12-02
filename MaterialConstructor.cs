@@ -21,19 +21,16 @@ public Texture2D texturePreview;
         if(blockName == "grass_block") {
             var www1 = UnityWebRequestTexture.GetTexture("file:///C:/Users/danie/AppData/Roaming/.cubegame/block/" + blockName + "_side.png");
             var www2 = UnityWebRequestTexture.GetTexture("file:///C:/Users/danie/AppData/Roaming/.cubegame/block/" + blockName + "_top.png");
-            var www3 = UnityWebRequestTexture.GetTexture("file:///C:/Users/danie/AppData/Roaming/.cubegame/colormap/grass.png");
                 
             yield return www1.SendWebRequest();
             yield return www2.SendWebRequest();
-            yield return www3.SendWebRequest();
             
-            if(www1.result == UnityWebRequest.Result.Success && www2.result == UnityWebRequest.Result.Success && www3.result == UnityWebRequest.Result.Success) {
+            if(www1.result == UnityWebRequest.Result.Success && www2.result == UnityWebRequest.Result.Success) {
                 Texture2D texture1 = DownloadHandlerTexture.GetContent(www1);
                 Texture2D texture2 = DownloadHandlerTexture.GetContent(www2);
                 Texture2D texture1Rotated = rotateTexture(texture1, false);
                 Texture2D texture1Rotated2 = rotateTexture(texture1, true);
                 Texture2D texture1Rotated3 = rotateTexture(texture1Rotated, false);
-                Texture2D colorMap = DownloadHandlerTexture.GetContent(www3);
                 Texture2D texture2Colored = new Texture2D(64, 64);
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3);
