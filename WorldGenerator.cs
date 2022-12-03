@@ -326,12 +326,12 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-            triangles[(cubeNumber * 36) + 0] = 0 + cubeNumber * 14;
+            triangles[(cubeNumber * 36) + 0] = 2 + cubeNumber * 14;
             triangles[(cubeNumber * 36) + 1] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 2] = 2 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 2] = 0 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 3] = 2 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 4] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 3] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 4] = 2 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 5] = 3 + (cubeNumber * 14);
 
             triangles[(cubeNumber * 36) + 6] = 1 + (cubeNumber * 14);
@@ -342,13 +342,20 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 10] = 4 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 11] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 12] = 4 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 13] = 6 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 14] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 15] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 16] = 6 + (cubeNumber * 14);
+
+
+            triangles[(cubeNumber * 36) + 12] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 13] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 14] = 4 + (cubeNumber * 14);
+
+            triangles[(cubeNumber * 36) + 15] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 16] = 5 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 17] = 7 + (cubeNumber * 14);
+
+
+
+
 
             triangles[(cubeNumber * 36) + 18] = 6 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 19] = 7 + (cubeNumber * 14);
@@ -362,6 +369,9 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 25] = 11 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 26] = 10 + (cubeNumber * 14);
 
+
+
+
             triangles[(cubeNumber * 36) + 27] = 1 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 28] = 4 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 29] = 11 + (cubeNumber * 14);
@@ -373,7 +383,8 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 33] = 5 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 34] = 12 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 35] = 13 + (cubeNumber * 14);
-        
+            
+    
             trianglesCount += 36;
 
 
