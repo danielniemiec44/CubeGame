@@ -34,6 +34,7 @@ public Texture2D texturePreview;
                 Texture2D texture2Colored = new Texture2D(64, 64);
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3);
+                generatedTexture.filterMode = FilterMode.Trilinear;
 
                 //Color greenColor = new Color(139, 187, 102, 1.0f);
                 
