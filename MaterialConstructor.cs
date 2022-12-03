@@ -33,7 +33,7 @@ public Texture2D texturePreview;
                 Texture2D texture1Rotated3 = rotateTexture(texture1Rotated, false);
                 Texture2D texture2Colored = new Texture2D(64, 64);
 
-                Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3);
+                Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3, UnityEngine.Experimental.Rendering.DefaultFormat.LDR, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
                 generatedTexture.filterMode = FilterMode.Trilinear;
 
                 //Color greenColor = new Color(139, 187, 102, 1.0f);
