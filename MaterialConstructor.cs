@@ -31,7 +31,7 @@ public Texture2D texturePreview;
                 Texture2D texture1Rotated = rotateTexture(texture1, false);
                 Texture2D texture1Rotated2 = rotateTexture(texture1, true);
                 Texture2D texture1Rotated3 = rotateTexture(texture1Rotated, false);
-                Texture2D texture2Colored = new Texture2D(64, 64);
+                Texture2D texture2Colored = new Texture2D(texture2.width, texture2.height);
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3);
 
