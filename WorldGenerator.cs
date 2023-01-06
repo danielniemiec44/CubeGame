@@ -31,7 +31,7 @@ public class WorldGenerator : MonoBehaviour
 
     Menu menu;
 
-    int framesInterval = 1;
+    int framesInterval = 0;
     int framesBehind = 0;
 
     public Material material;
@@ -42,7 +42,7 @@ public class WorldGenerator : MonoBehaviour
 
     Mesh cubeMesh;
     RenderParams rp;
-    int renderDistance = 2;
+    int renderDistance = 8;
 
     //Vector3[] cubeVertices;
     //int[] cubeTriangles;
@@ -60,6 +60,13 @@ public class WorldGenerator : MonoBehaviour
 
     public MaterialConstructor materialConstructor;
 
+    Interact interact;
+
+
+    public DebugScreen debugScreen;
+
+    public bool renderingEnabled = true;
+
 
 
 
@@ -69,6 +76,7 @@ public class WorldGenerator : MonoBehaviour
     {
         
         meshList = new MeshInstance[6000];
+        interact = player.GetComponent<Interact>();
 
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -81,6 +89,8 @@ public class WorldGenerator : MonoBehaviour
         int[] cubeTriangles = cubeMesh.triangles;
         Vector3[] cubeNormals = cubeMesh.normals;
         Vector2[] cubeUv = cubeMesh.uv;
+
+
         //cubeVerticesCount = cubeVertices.Length;
         //cubeTrianglesCount = cubeTriangles.Length;
         
@@ -128,27 +138,50 @@ public class WorldGenerator : MonoBehaviour
     {
         int playerChunkX = (int) (player.transform.position.x / 16);
         int playerChunkZ = (int) (player.transform.position.z / 16);
+        
+        if(debugScreen != null) {
+            if(debugScreen.avgFrames < 60) {
+                if(renderingEnabled) {
+                    Debug.Log("World rendering disabled due to low FPS.");
+                }
+                renderingEnabled = false;
+            } else {
+                if(!renderingEnabled) {
+                    Debug.Log("World rendering resumed.");
+                }
+                renderingEnabled = true;
+            }
+        } else {
+            try {
+                debugScreen = GameObject.Find("DebugScreen").GetComponent<DebugScreen>();
+            } catch {
+
+            }
+        }
 
         
-        for(int x = playerChunkX - renderDistance; x < playerChunkX + renderDistance; x++) {
-            for(int z = playerChunkZ - renderDistance; z < playerChunkZ + renderDistance; z++) {
-                Vector2 chunk = new Vector2(x, z);
-                if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
-                    chunksQueued.Enqueue(new Vector2(x, z));
+            for(int temporaryRenderDistance = 3; temporaryRenderDistance < renderDistance; temporaryRenderDistance++) {
+                for(int x = playerChunkX - temporaryRenderDistance; x < playerChunkX + temporaryRenderDistance; x++) {
+                    for(int z = playerChunkZ - temporaryRenderDistance; z < playerChunkZ + temporaryRenderDistance; z++) {
+                        Vector2 chunk = new Vector2(x, z);
+                        if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
+                            chunksQueued.Enqueue(new Vector2(x, z));
+                        }
+                    }
                 }
             }
-        }
             
 
-
-        if(framesBehind > framesInterval) {
-            if(chunksQueued.Count != 0) {
-                Vector2 chunk = chunksQueued.Dequeue();
-                GenerateChunk((int) chunk.x, (int) chunk.y);
+        if(renderingEnabled) {
+            if(framesBehind > framesInterval) {
+                if(chunksQueued.Count != 0) {
+                    Vector2 chunk = chunksQueued.Dequeue();
+                    GenerateChunk((int) chunk.x, (int) chunk.y);
+                }
+                framesBehind = 0;
             }
-            framesBehind = 0;
+            framesBehind++;
         }
-        framesBehind++;
 
 
 
@@ -201,37 +234,29 @@ public class WorldGenerator : MonoBehaviour
                 MeshInstance meshInstance = meshList[i];
                     if(meshInstance.chunkX + 1 >= playerChunkX && meshInstance.chunkX < playerChunkX + renderDistance) {
                         int cubesCount = meshInstance.cubesCount;
-                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
                         //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-                        }
+                            Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
                     }
                 } else if(heading == Heading.West) {
                 MeshInstance meshInstance = meshList[i];
                     if(meshInstance.chunkX - 1 <= playerChunkX && meshInstance.chunkX < playerChunkX + renderDistance) {
                         int cubesCount = meshInstance.cubesCount;
-                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
                         //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-                        }
+                            Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
                     }
                 } else if(heading == Heading.North) {
                 MeshInstance meshInstance = meshList[i];
                     if(meshInstance.chunkZ + 1 >= playerChunkZ && meshInstance.chunkZ < playerChunkZ + renderDistance) {
                         int cubesCount = meshInstance.cubesCount;
-                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
                         //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-                        }
+                            Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
                     }
                 } else if(heading == Heading.South) {
                 MeshInstance meshInstance = meshList[i];
                     if(meshInstance.chunkZ - 1 <= playerChunkZ && meshInstance.chunkZ < playerChunkZ + renderDistance) {
                         int cubesCount = meshInstance.cubesCount;
-                        for(int meshIndex = 0; meshIndex < cubesCount; meshIndex++) {
                         //Graphics.DrawMesh(meshInstance.mesh, new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16), Quaternion.identity, material, meshIndex);
-                            Graphics.RenderMesh(rp, meshInstance.mesh, meshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
-                        }
+                            Graphics.RenderMesh(rp, meshInstance.mesh, 0, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
                     }
                 }
             }
@@ -279,9 +304,8 @@ public class WorldGenerator : MonoBehaviour
         int cubeNumber = 0;
         for(int x = 0; x < 16; x++) {
                 for(int z = 0; z < 16; z++) {
-                    //for(int y = 0; y < (int) (heightMap[noiseMapPosition] * 10); y++) {
-                    int y = (int) (heightMap[noiseMapPosition] * 10);
-                        //(int) (heightMap[noiseMapPosition] * 10)
+            
+            int y = (int) (heightMap[noiseMapPosition] * 10);
             vertices[cubeNumber * 14] = new Vector3(x + 0, y + 1, z + 0);
             vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
             vertices[(cubeNumber * 14) + 2] = new Vector3(x + 1, y + 1, z + 0);
@@ -302,12 +326,12 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-            triangles[(cubeNumber * 36) + 0] = 0 + cubeNumber * 14;
+            triangles[(cubeNumber * 36) + 0] = 2 + cubeNumber * 14;
             triangles[(cubeNumber * 36) + 1] = 1 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 2] = 2 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 2] = 0 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 3] = 2 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 4] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 3] = 1 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 4] = 2 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 5] = 3 + (cubeNumber * 14);
 
             triangles[(cubeNumber * 36) + 6] = 1 + (cubeNumber * 14);
@@ -318,13 +342,20 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 10] = 4 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 11] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 12] = 4 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 13] = 6 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 14] = 5 + (cubeNumber * 14);
 
-            triangles[(cubeNumber * 36) + 15] = 5 + (cubeNumber * 14);
-            triangles[(cubeNumber * 36) + 16] = 6 + (cubeNumber * 14);
+
+
+            triangles[(cubeNumber * 36) + 12] = 5 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 13] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 14] = 4 + (cubeNumber * 14);
+
+            triangles[(cubeNumber * 36) + 15] = 6 + (cubeNumber * 14);
+            triangles[(cubeNumber * 36) + 16] = 5 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 17] = 7 + (cubeNumber * 14);
+
+
+
+
 
             triangles[(cubeNumber * 36) + 18] = 6 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 19] = 7 + (cubeNumber * 14);
@@ -338,6 +369,9 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 25] = 11 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 26] = 10 + (cubeNumber * 14);
 
+
+
+
             triangles[(cubeNumber * 36) + 27] = 1 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 28] = 4 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 29] = 11 + (cubeNumber * 14);
@@ -349,7 +383,8 @@ public class WorldGenerator : MonoBehaviour
             triangles[(cubeNumber * 36) + 33] = 5 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 34] = 12 + (cubeNumber * 14);
             triangles[(cubeNumber * 36) + 35] = 13 + (cubeNumber * 14);
-        
+            
+    
             trianglesCount += 36;
 
 
@@ -377,10 +412,9 @@ public class WorldGenerator : MonoBehaviour
             uv[(cubeNumber * 14) + 13] = new Vector2(x + 0.5f, z + 0); //13
 
             uvCount += 14;
-
-            cubeNumber++;
             cubesCountTotal++;
             mesh.subMeshCount++;
+            cubeNumber++;
             
 
                 //}
@@ -391,9 +425,7 @@ public class WorldGenerator : MonoBehaviour
         Array.Resize(ref triangles, trianglesCount);
         Array.Resize(ref uv, uvCount);
         mesh.vertices = vertices;
-        for(int triangleNumber = 0; triangleNumber < (triangles.Length / 72); triangleNumber++) {
-            mesh.SetTriangles(triangles, triangleNumber * 36, (triangleNumber + 1) * 36, triangleNumber);
-        }
+        mesh.triangles = triangles;
 
 
         //mesh.triangles = triangles;
@@ -427,9 +459,7 @@ public class WorldGenerator : MonoBehaviour
     }
 
 
-    public static void removeBlock(Vector3 block) {
-        
-    }
+    
 
 
 

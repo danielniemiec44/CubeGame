@@ -15,9 +15,12 @@ public class Interact : MonoBehaviour
 
     RenderParams rp;
 
+    Menu menu;
+
     // Start is called before the first frame update
     void Start()
     {
+        menu = GameObject.Find("Canvas").GetComponent<Menu>();
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = new Vector3(0, 0, 0);
         cube.transform.localScale = new Vector3(1, 1, 1);
@@ -104,8 +107,8 @@ public class Interact : MonoBehaviour
     void Update()
     {
         highlightPosition = checkLookingAt();
-        if (Input.GetMouseButtonDown(0)) {
-            WorldGenerator.removeBlock(highlightPosition);
+        if (Input.GetMouseButtonDown(0) && menu.isPlayerInTheGame) {
+            removeBlock();
         }
     }
 
@@ -120,7 +123,14 @@ public class Interact : MonoBehaviour
             highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
             return highlightPosition;
         } else {
-            return new Vector3(0, 0, 0);
+            return new Vector3(0, -100, 0);
+        }
+    }
+
+    public void removeBlock() {
+        Vector3 block = checkLookingAt();
+        if(block.y >= 0) {
+            Debug.Log("Broken block: " + block);
         }
     }
 }
