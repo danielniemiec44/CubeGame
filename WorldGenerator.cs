@@ -288,16 +288,17 @@ public class WorldGenerator : MonoBehaviour
 
     void GenerateChunk(int chunkX, int chunkZ)
     {
-
+        var watch = System.Diagnostics.Stopwatch.StartNew();
         //int cubeNumber = 0;
         GameObject chunk = Instantiate(chunkPrefab, new Vector3(chunkX * 16, 0, chunkZ * 16), Quaternion.identity);
         chunk.name = "Chunk(" + chunkX + "," + chunkZ + ")";
         //MeshFilter meshFilter = chunk.GetComponent<MeshFilter> ();
         //Renderer renderer = chunk.GetComponent<Renderer>();
         MeshCollider meshCollider = chunk.GetComponent<MeshCollider>();
-
+        watch.Stop();
+        Debug.Log("Instantiating takes: " + watch.ElapsedMilliseconds + "ms");
         
-
+        watch = System.Diagnostics.Stopwatch.StartNew();
         Vector2[] noiseMap = new Vector2[600000];
         int i = 0;
         for(int x = 0; x < 16; x++) {
@@ -308,14 +309,17 @@ public class WorldGenerator : MonoBehaviour
         }
 
         float[] heightMap = CalculateHeights(noiseMap);
-
+        watch.Stop();
+        Debug.Log("Calculating heightmap takes: " + watch.ElapsedMilliseconds + "ms");
 
         
+        watch = System.Diagnostics.Stopwatch.StartNew();
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         int[] meshTriangles = new int[600000];
         int trianglesCount = 0;
         int heightMapPosition = 0;
+        
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
                 Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, (int) (heightMap[heightMapPosition] * 10), z))), 0, meshTriangles, trianglesCount, 36);
@@ -323,23 +327,38 @@ public class WorldGenerator : MonoBehaviour
                 heightMapPosition++;
             }
         }
+        
+        
         //Array.Copy(calculateTriangles(0), 0, meshTriangles, 0, 36);
         //Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(0, 0, 10))), 0, meshTriangles, 36, 36);
         Array.Resize(ref meshTriangles, trianglesCount);
+        watch.Stop();
+        Debug.Log("Calculating triangles takes: " + watch.ElapsedMilliseconds + "ms");
+
+
+
+        watch = System.Diagnostics.Stopwatch.StartNew();
         mesh.triangles = meshTriangles;
         mesh.normals = vertices;
         mesh.uv = uv;
+        mesh.RecalculateNormals ();
+        watch.Stop();
+        Debug.Log("Setting mesh takes: " + watch.ElapsedMilliseconds + "ms");
 
 
-        //mesh.Optimize ();
-		mesh.RecalculateNormals ();
-
+        
+        watch = System.Diagnostics.Stopwatch.StartNew();
         meshCollider.sharedMesh = mesh;
+        watch.Stop();
+        Debug.Log("Setting collider takes: " + watch.ElapsedMilliseconds + "ms");
+    
+
 
         meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ);
         meshCount++;
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
+        
     }
 
 

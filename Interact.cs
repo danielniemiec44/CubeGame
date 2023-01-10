@@ -63,8 +63,6 @@ public class Interact : MonoBehaviour
                     highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
                 }    
             }
-            
-            Debug.Log(hit.normal);
             return highlightPosition;
         } else {
             return new Vector3(0, -100, 0);
