@@ -75,7 +75,6 @@ public class WorldGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
         meshList = new MeshInstance[6000];
 
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -376,11 +375,11 @@ public class WorldGenerator : MonoBehaviour
         int[] triangles = new int[36];
 
         triangles[0] = 0 + (cubeNumber * 14);
-        triangles[1] = 1 + (cubeNumber * 14);
-        triangles[2] = 2 + (cubeNumber * 14);
+        triangles[1] = 2 + (cubeNumber * 14);
+        triangles[2] = 1 + (cubeNumber * 14);
 
-        triangles[3] = 2 + (cubeNumber * 14);
-        triangles[4] = 1 + (cubeNumber * 14);
+        triangles[3] = 1 + (cubeNumber * 14);
+        triangles[4] = 2 + (cubeNumber * 14);
         triangles[5] = 3 + (cubeNumber * 14);
 
         triangles[6] = 1 + (cubeNumber * 14);
@@ -393,20 +392,20 @@ public class WorldGenerator : MonoBehaviour
 
 
         triangles[12] = 4 + (cubeNumber * 14);
-        triangles[13] = 6 + (cubeNumber * 14);
-        triangles[14] = 5 + (cubeNumber * 14);
+        triangles[13] = 5 + (cubeNumber * 14);
+        triangles[14] = 6 + (cubeNumber * 14);
 
         triangles[15] = 5 + (cubeNumber * 14);
-        triangles[16] = 6 + (cubeNumber * 14);
-        triangles[17] = 7 + (cubeNumber * 14);
+        triangles[16] = 7 + (cubeNumber * 14);
+        triangles[17] = 6 + (cubeNumber * 14);
 
         triangles[18] = 6 + (cubeNumber * 14);
         triangles[19] = 7 + (cubeNumber * 14);
         triangles[20] = 8 + (cubeNumber * 14);
 
-        triangles[21] = 8 + (cubeNumber * 14);
-        triangles[22] = 7 + (cubeNumber * 14);
-        triangles[23] = 9 + (cubeNumber * 14);
+        triangles[21] = 7 + (cubeNumber * 14);
+        triangles[22] = 9 + (cubeNumber * 14);
+        triangles[23] = 8 + (cubeNumber * 14);
         
         triangles[24] = 1 + (cubeNumber * 14);
         triangles[25] = 11 + (cubeNumber * 14);

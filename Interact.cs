@@ -50,7 +50,21 @@ public class Interact : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 3.0f)) {
             Vector3 point = hit.point;
-            highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+            if(hit.normal.x < 0) {
+                if(hit.normal.z < 0) {
+                    highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
+                } else {
+                    highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+                }
+            } else {
+                if(hit.normal.z < 0) {
+                    highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
+                } else {
+                    highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+                }    
+            }
+            
+            Debug.Log(hit.normal);
             return highlightPosition;
         } else {
             return new Vector3(0, -100, 0);
