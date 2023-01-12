@@ -121,7 +121,7 @@ public class WorldGenerator : MonoBehaviour
 
 
         int cubeNumber = 0;
-        for(int y = 0; y < 256; y++) {
+        for(int y = 0; y < 30; y++) {
             for(int z = 0; z < 16; z++) {
                 for(int x = 0; x < 16; x++) {
                     vertices[(cubeNumber * 14)] = new Vector3(x + 0, y + 1, z + 0);
@@ -384,7 +384,7 @@ public class WorldGenerator : MonoBehaviour
         mesh.SetTriangles(meshStoneTriangles, 4);
         mesh.normals = vertices;
         mesh.uv = uv;
-        mesh.RecalculateNormals ();
+        //mesh.RecalculateNormals ();
         
         //for(int index = 1; index < 5; index++) {
         //    mesh.SetSubMesh(index, new SubMeshDescriptor(), MeshUpdateFlags.Default);
@@ -432,7 +432,7 @@ public class WorldGenerator : MonoBehaviour
                         newTriangles = newTriangles.Where(e => (e != (cubeIndex * 14) + i)).ToArray();
                     }
                     instance.mesh.SetTriangles(newTriangles, subMeshIndex);
-                    instance.mesh.RecalculateNormals();
+                    //instance.mesh.RecalculateNormals();
                 }
                 //Debug.Log("SubMeshCount: " + instance.mesh.subMeshCount);
                 //instance.mesh.SetTriangles(calculateTriangles(calculateCubeIndex(blockVector - new Vector3(0, -1, 0))), 1);
@@ -455,7 +455,7 @@ public class WorldGenerator : MonoBehaviour
                 Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
                 Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
                 instance.mesh.SetTriangles(newTriangles, 2);
-                instance.mesh.RecalculateNormals();
+                //instance.mesh.RecalculateNormals();
 
                 GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
 
@@ -515,6 +515,8 @@ public class WorldGenerator : MonoBehaviour
         triangles[33] = 5 + (cubeNumber * 14);
         triangles[34] = 12 + (cubeNumber * 14);
         triangles[35] = 13 + (cubeNumber * 14);
+
+
 
         return triangles;
     }
