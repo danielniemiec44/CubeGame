@@ -11,10 +11,12 @@ public Material[] materials;
 public Texture2D[] texturePreview;
 
     void Start() {
-        materials = new Material[2];
-        texturePreview = new Texture2D[2];
+        materials = new Material[4];
+        texturePreview = new Texture2D[4];
         StartCoroutine(LoadTextureFromCache("grass_block", 0));
         StartCoroutine(LoadTextureFromCache("dirt", 1));
+        StartCoroutine(LoadTextureFromCache("bedrock", 2));
+        StartCoroutine(LoadTextureFromCache("stone", 3));
     }
 
     IEnumerator LoadTextureFromCache(string blockName, int index) {

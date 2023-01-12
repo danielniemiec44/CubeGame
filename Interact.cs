@@ -17,6 +17,8 @@ public class Interact : MonoBehaviour
 
     Menu menu;
 
+    RaycastHit hit;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,19 +39,28 @@ public class Interact : MonoBehaviour
     void Update()
     {
         highlightPosition = checkLookingAt();
+        //Debug.Log("Normals: " + hit.normal);
+        //Debug.Log("Relative Block: " + getRelativeBlock());
         if (Input.GetMouseButtonDown(0) && menu.isPlayerInTheGame) {
-            removeBlock();
+            InvokeRepeating("removeBlock", 0, 0.25f); 
+        }
+        if ((Input.GetMouseButtonUp(0) && menu.isPlayerInTheGame) || !menu.isPlayerInTheGame) {
+            CancelInvoke("removeBlock");
+        }
+
+        if (Input.GetMouseButtonDown(1) && menu.isPlayerInTheGame) {
+            setBlock();
         }
     }
 
     public Vector3 checkLookingAt() {
         Graphics.RenderMesh(rp, highlightMesh, 0, Matrix4x4.Translate(highlightPosition));
 
-        RaycastHit hit;
         Ray ray = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(ray, out hit, 3.0f)) {
             Vector3 point = hit.point;
+
             if(hit.normal.x < 0) {
                 if(hit.normal.z < 0) {
                     highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
@@ -63,16 +74,35 @@ public class Interact : MonoBehaviour
                     highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
                 }    
             }
+
+
             return highlightPosition;
         } else {
             return new Vector3(0, -100, 0);
         }
     }
 
+
+    public Vector3 getRelativeBlock() {
+        Vector3 block = checkLookingAt();
+        Vector3 normal = hit.normal;
+
+       if(block == new Vector3(0, -100, 0)){
+        return block;
+       }
+
+        return block + normal;
+    }
+
     public void removeBlock() {
         Vector3 block = checkLookingAt();
-        if(block.y >= 0) {
+        if(block.y > 1) {
             WorldGenerator.removeBlock(block);
         }
+    }
+
+
+    public void setBlock() {
+            WorldGenerator.setBlock(getRelativeBlock());
     }
 }
