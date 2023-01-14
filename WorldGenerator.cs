@@ -64,10 +64,11 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-    Vector3[] vertices = new Vector3[917504];
-    Vector2[] uv = new Vector2[917504];
 
-    int standardHeight = 10;
+
+    int standardHeight = 7;
+
+    
 
     
 
@@ -79,27 +80,6 @@ public class WorldGenerator : MonoBehaviour
     void Start()
     {
         meshList = new MeshInstance[6000];
-
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.position = new Vector3(0, 0, 0);
-        cube.transform.localScale = new Vector3(1, 1, 1);
-        cubeMesh = cube.GetComponent<MeshFilter>().mesh;
-        cubeMesh.Optimize();
-        cubeMesh.RecalculateNormals();
-        Vector3[] cubeVertices = cubeMesh.vertices;
-        int[] cubeTriangles = cubeMesh.triangles;
-        Vector3[] cubeNormals = cubeMesh.normals;
-        Vector2[] cubeUv = cubeMesh.uv;
-        //cubeVerticesCount = cubeVertices.Length;
-        //cubeTrianglesCount = cubeTriangles.Length;
-        
-        //Debug.Log(String.Join(", ", cubeVertices));
-        //Debug.Log(String.Join(", ", cubeTriangles));
-        //Debug.Log(String.Join(", ", cubeNormals));
-        //Debug.Log(String.Join(", ", cubeUv));
-
-        //cube.GetComponent<Renderer>().material = material;
-        Destroy(cube);
 
         chunksLoaded = new List<Vector2>();
         chunksQueued = new Queue<Vector2>();
@@ -120,45 +100,7 @@ public class WorldGenerator : MonoBehaviour
         rps[3] = new RenderParams(materialConstructor.materials[3]);
 
 
-        int cubeNumber = 0;
-        for(int y = 0; y < 30; y++) {
-            for(int z = 0; z < 16; z++) {
-                for(int x = 0; x < 16; x++) {
-                    vertices[(cubeNumber * 14)] = new Vector3(x + 0, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
-                    vertices[(cubeNumber * 14) + 2] = new Vector3(x + 1, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 3] = new Vector3(x + 1, y + 0, z + 0);
-                    vertices[(cubeNumber * 14) + 4] = new Vector3(x + 0, y + 0, z + 1);
-                    vertices[(cubeNumber * 14) + 5] = new Vector3(x + 1, y + 0, z + 1);
-                    vertices[(cubeNumber * 14) + 6] = new Vector3(x + 0, y + 1, z + 1);
-                    vertices[(cubeNumber * 14) + 7] = new Vector3(x + 1, y + 1, z + 1);
-
-                    vertices[(cubeNumber * 14) + 8] = new Vector3(x + 0, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 9] = new Vector3(x + 1, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 10] = new Vector3(x + 0, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 11] = new Vector3(x + 0, y + 1, z + 1);
-                    vertices[(cubeNumber * 14) + 12] = new Vector3(x + 1, y + 1, z + 0);
-                    vertices[(cubeNumber * 14) + 13] = new Vector3(x + 1, y + 1, z + 1);
-
-
-                    uv[(cubeNumber * 14)] = new Vector2(x + 0, z + 0.66f); //0
-                    uv[(cubeNumber * 14) + 1] = new Vector2(x + 0.25f, z + 0.66f); //1
-                    uv[(cubeNumber * 14) + 2] = new Vector2(x + 0, z + 0.33f); //2
-                    uv[(cubeNumber * 14) + 3] = new Vector2(x + 0.25f, z + 0.33f); //3
-                    uv[(cubeNumber * 14) + 4] = new Vector2(x + 0.5f, z + 0.66f); //4
-                    uv[(cubeNumber * 14) + 5] = new Vector2(x + 0.5f, z + 0.33f); //5
-                    uv[(cubeNumber * 14) + 6] = new Vector2(x + 0.75f, z + 0.66f); //6
-                    uv[(cubeNumber * 14) + 7] = new Vector2(x + 0.75f, z + 0.33f); //7
-                    uv[(cubeNumber * 14) + 8] = new Vector2(x + 1, z + 0.66f); //8
-                    uv[(cubeNumber * 14) + 9] = new Vector2(x + 1, z + 0.33f); //9
-                    uv[(cubeNumber * 14) + 10] = new Vector2(x + 0.25f, z + 1); //10
-                    uv[(cubeNumber * 14) + 11] = new Vector2(x + 0.5f, z + 1); //11
-                    uv[(cubeNumber * 14) + 12] = new Vector2(x + 0.25f, z + 0); //12
-                    uv[(cubeNumber * 14) + 13] = new Vector2(x + 0.5f, z + 0); //13
-                    cubeNumber++;
-                }
-            }
-        }
+        
 
 
         for(int x = -2; x < 2; x++) {
@@ -333,9 +275,7 @@ public class WorldGenerator : MonoBehaviour
 
         
         watch = System.Diagnostics.Stopwatch.StartNew();
-        Mesh mesh = new Mesh();
         
-        mesh.vertices = vertices;
         int[] meshTriangles = new int[600000];
         int[] meshDirtTriangles = new int[600000];
         int[] meshBedrockTriangles = new int[600000];
@@ -352,11 +292,11 @@ public class WorldGenerator : MonoBehaviour
                 trianglesCount += 36;
                 Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, 0, z))), 0, meshBedrockTriangles, bedrockTrianglesCount, 36);
                 bedrockTrianglesCount += 36;
-                for(int y = 1; y < 10; y++) {
+                for(int y = 1; y < standardHeight; y++) {
                     Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, y, z))), 0, meshStoneTriangles, stoneTrianglesCount, 36);
                     stoneTrianglesCount += 36;
                 }
-                for(int y = 10; y < (int) (heightMap[heightMapPosition] * 10) + standardHeight; y++) {
+                for(int y = standardHeight; y < (int) (heightMap[heightMapPosition] * 10) + standardHeight; y++) {
                     Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, y, z))), 0, meshDirtTriangles, dirtTrianglesCount, 36);
                     dirtTrianglesCount += 36;
                 }
@@ -377,20 +317,23 @@ public class WorldGenerator : MonoBehaviour
 
 
         watch = System.Diagnostics.Stopwatch.StartNew();
+        
+        watch.Stop();
+        Mesh mesh = MeshPooling.meshPrefabs[meshCount];
+        Debug.Log("Setting mesh takes: " + watch.ElapsedMilliseconds + "ms");
+
+
+
+        watch = System.Diagnostics.Stopwatch.StartNew();
         mesh.subMeshCount = 5;
         mesh.SetTriangles(meshTriangles, 1);
         mesh.SetTriangles(meshDirtTriangles, 2);
         mesh.SetTriangles(meshBedrockTriangles, 3);
         mesh.SetTriangles(meshStoneTriangles, 4);
-        mesh.normals = vertices;
-        mesh.uv = uv;
-        //mesh.RecalculateNormals ();
         
-        //for(int index = 1; index < 5; index++) {
-        //    mesh.SetSubMesh(index, new SubMeshDescriptor(), MeshUpdateFlags.Default);
-        //}
+        mesh.RecalculateNormals ();
         watch.Stop();
-        Debug.Log("Setting mesh takes: " + watch.ElapsedMilliseconds + "ms");
+        Debug.Log("Setting triangles takes: " + watch.ElapsedMilliseconds + "ms");
 
 
         
@@ -432,7 +375,7 @@ public class WorldGenerator : MonoBehaviour
                         newTriangles = newTriangles.Where(e => (e != (cubeIndex * 14) + i)).ToArray();
                     }
                     instance.mesh.SetTriangles(newTriangles, subMeshIndex);
-                    //instance.mesh.RecalculateNormals();
+                    instance.mesh.RecalculateNormals();
                 }
                 //Debug.Log("SubMeshCount: " + instance.mesh.subMeshCount);
                 //instance.mesh.SetTriangles(calculateTriangles(calculateCubeIndex(blockVector - new Vector3(0, -1, 0))), 1);
@@ -455,7 +398,7 @@ public class WorldGenerator : MonoBehaviour
                 Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
                 Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
                 instance.mesh.SetTriangles(newTriangles, 2);
-                //instance.mesh.RecalculateNormals();
+                instance.mesh.RecalculateNormals();
 
                 GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
 
