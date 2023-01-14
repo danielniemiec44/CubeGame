@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 public class MeshPooling : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class MeshPooling : MonoBehaviour
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        Application.targetFrameRate = 9999;
         int cubeNumber = 0;
         for(int y = 0; y < 30; y++) {
             for(int z = 0; z < 16; z++) {
@@ -57,13 +59,16 @@ public class MeshPooling : MonoBehaviour
         }
 
         Mesh mesh = new Mesh();
+        mesh.indexFormat = IndexFormat.UInt32;
         mesh.vertices = vertices;
         mesh.normals = vertices;
         mesh.uv = uv;
-        for(int i = 0; i < 100; i++) {
+        float meshCount = 100.0f;
+        for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
             yield return new WaitForSeconds(0.001f);
-            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1520 * ((i + 1) / 100.0f));
+            int progress = (i + 30);           
+            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1520 * ((i + 1) / meshCount));
             
         }
         loadingScreen.SetActive(false);

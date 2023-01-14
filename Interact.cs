@@ -103,6 +103,9 @@ public class Interact : MonoBehaviour
 
 
     public void setBlock() {
+        Vector3 block = checkLookingAt();
+        if(block.y > 0) {
             WorldGenerator.setBlock(getRelativeBlock());
+        }
     }
 }

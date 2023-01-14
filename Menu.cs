@@ -23,7 +23,7 @@ public class Menu : MonoBehaviour
 
     public GameObject DebugScreen;
 
-    public int HotBarFocus = 0;
+    public static int HotBarFocus = 0;
     
     public GameObject HotBar;
     public GameObject Inventory;
@@ -39,6 +39,7 @@ public class Menu : MonoBehaviour
     GameObject firstPersonCamera;
     FirstPersonLook firstPersonLookComponent;
     public GameObject materials;
+    public GameObject errorScreen;
 
 
 
@@ -182,5 +183,20 @@ public class Menu : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+    }
+
+
+    public void ExitGame() {
+        Application.Quit();
+    }
+
+    public void HandleError(string err) {
+        foreach(GameObject gameObject in GameObject.FindGameObjectsWithTag("Untagged")) {
+            if(gameObject.name != "Canvas") {
+                Destroy(gameObject);
+            }
+        }
+        errorScreen.SetActive(true);
+
     }
 }
