@@ -31,25 +31,7 @@ public class MeshInstance
         this.chunkZ = chunkZ;
         this.blockIds = blockIds;
 
-        mesh.subMeshCount = 11;
-        int[,] triangles = new int[11, 2359296];
-        int[] trianglesLenth = new int[11];
-        for(int blockId = 0; blockId < 65536; blockId++) {
-            if(blockIds[blockId] != 0) {
-                int[] cubeTriangles = calculateTriangles(blockId);
-                for(int i = 0; i < 36; i++) {
-                    triangles[blockIds[blockId] - 1, trianglesLenth[blockIds[blockId] - 1] + i] = cubeTriangles[i];
-                }
-                trianglesLenth[blockIds[blockId] - 1] += 36;
-            }
-        }
-        for(int i = 0; i < 10; i++) {
-            int[] resizedTriangles = new int[trianglesLenth[i]];
-            for(int a = 0; a < trianglesLenth[i]; a++) {
-                resizedTriangles[a] = triangles[i, a];
-            }
-            mesh.SetTriangles(resizedTriangles, i + 1);
-        }
+        updateMesh();
     }
 
 
@@ -120,11 +102,14 @@ public class MeshInstance
         int blockId = instance.blockIds[cubeIndex];
         if(blockId != 0) {
             instance.blockIds[cubeIndex] = 0;
+            /*
             int[] newTriangles = instance.mesh.GetTriangles(blockId);
             for(int i = 0; i < 14; i++) {
                 newTriangles = newTriangles.Where(e => (e != (cubeIndex * 14) + i)).ToArray();
             }
             instance.mesh.SetTriangles(newTriangles, blockId);
+            */
+            instance.updateMesh();
             GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
         }
     }
@@ -143,7 +128,7 @@ public class MeshInstance
         Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
         instance.mesh.SetTriangles(newTriangles, HotBarFocus);
         //instance.mesh.RecalculateNormals();
-
+        instance.updateMesh();
         GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
     }
 
@@ -194,6 +179,35 @@ public class MeshInstance
     }
 
 
-    
+    public void updateMesh() {
+        mesh.subMeshCount = 11;
+        int[,] triangles = new int[11, 2359296];
+        int[] trianglesLenth = new int[11];
+        for(int blockId = 0; blockId < 65536; blockId++) {
+            if(blockIds[blockId] != 0) {
+                if(
+                    !((blockId - 1 > 0 && blockId + 1 < 65536 && blockId - 16 > 0 && blockId + 16 < 65536 && blockId - 256 > 0 && blockId + 256 < 65536) &&
+                    (blockIds[blockId - 1] != 0 && blockIds[blockId + 1] != 0 &&
+                    blockIds[blockId - 16] != 0 && blockIds[blockId + 16] != 0 &&
+                    blockIds[blockId - 256] != 0 && blockIds[blockId + 256] != 0)) &&
+                    blockId != 0 && blockId != 65536
+                ) {
+                    int[] cubeTriangles = calculateTriangles(blockId);
+                    for(int i = 0; i < 36; i++) {
+                        triangles[blockIds[blockId] - 1, trianglesLenth[blockIds[blockId] - 1] + i] = cubeTriangles[i];
+                    }
+                    trianglesLenth[blockIds[blockId] - 1] += 36;
+                }
+                
+            }
+        }
+        for(int i = 0; i < 10; i++) {
+            int[] resizedTriangles = new int[trianglesLenth[i]];
+            for(int a = 0; a < trianglesLenth[i]; a++) {
+                resizedTriangles[a] = triangles[i, a];
+            }
+            mesh.SetTriangles(resizedTriangles, i + 1);
+        }
+    }
 
 }
