@@ -12,6 +12,11 @@ public class MeshPooling : MonoBehaviour
     public RectTransform loadingBarTransform;
     public GameObject loadingScreen;
 
+    public static float[,,] heightMap = new float[2000,2000,256];
+
+    public static int progress = 0;
+    
+
 
 
     // Start is called before the first frame update
@@ -19,7 +24,7 @@ public class MeshPooling : MonoBehaviour
     {
         Application.targetFrameRate = 9999;
         int cubeNumber = 0;
-        for(int y = 0; y < 30; y++) {
+        for(int y = 0; y < 256; y++) {
             for(int z = 0; z < 16; z++) {
                 for(int x = 0; x < 16; x++) {
                     vertices[(cubeNumber * 14)] = new Vector3(x + 0, y + 1, z + 0);
@@ -63,14 +68,18 @@ public class MeshPooling : MonoBehaviour
         mesh.vertices = vertices;
         mesh.normals = vertices;
         mesh.uv = uv;
+        mesh.normals = vertices;
         float meshCount = 100.0f;
+
         for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
-            yield return new WaitForSeconds(0.001f);
-            int progress = (i + 30);           
-            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1520 * ((i + 1) / meshCount));
-            
+            yield return new WaitForSeconds(0.001f);         
+            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1520 * (progress / 100.0f));
+            if(i % 2 == 0) {
+                progress++;
+            }
         }
+        GenerateHeightMap();
         loadingScreen.SetActive(false);
     }
 
@@ -79,4 +88,34 @@ public class MeshPooling : MonoBehaviour
     {
         
     }
+
+
+
+    public void GenerateHeightMap() {
+        for(int chunkX = -625; chunkX < 625; chunkX++) {
+            for(int chunkZ = -50; chunkZ < 50; chunkZ++) {
+                int i = 0;
+                Vector2[] noiseMap = new Vector2[256];
+                for(int x = 0; x < 16; x++) {
+                    for(int z = 0; z < 16; z++) {
+                        noiseMap[i] = new Vector2(x + (chunkX * 16), (chunkZ * 16) + z);
+                        i++;
+                    }
+                }
+                float[] singleHeightMap = CalculateHeights(noiseMap);
+                for(int a = 0; a < 256; a++) {
+                    heightMap[chunkX + 1000, chunkZ + 1000, a] = singleHeightMap[a];
+                }
+            }
+        }
+
+    }
+
+
+
+
+    float[] CalculateHeights(Vector2[] map) {
+        return NoiseS3D.NoiseArrayGPU(map, 0.01f, true);
+    }
+
 }

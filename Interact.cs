@@ -60,21 +60,24 @@ public class Interact : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 3.0f)) {
             Vector3 point = hit.point;
-
-            if(hit.normal.x < 0) {
-                if(hit.normal.z < 0) {
-                    highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
+            Debug.Log(hit.normal);
+            if(hit.normal.y >= 0) {
+                if(hit.normal.x < 0) {
+                    if(hit.normal.z < 0) {
+                        highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
+                    } else {
+                        highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+                    }
                 } else {
-                    highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+                    if(hit.normal.z < 0) {
+                        highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
+                    } else {
+                        highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
+                    }    
                 }
             } else {
-                if(hit.normal.z < 0) {
-                    highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
-                } else {
-                    highlightPosition = new Vector3((int) Math.Ceiling(point.x - 0.01f) - 0.5f, (int) Math.Ceiling(point.y - 0.01f) - 0.5f, (int) Math.Ceiling(point.z - 0.01f) - 0.5f);
-                }    
+                highlightPosition = new Vector3((int) Math.Ceiling(point.x + 0.01f) - 0.5f, (int) Math.Ceiling(point.y + 0.01f) - 0.5f, (int) Math.Ceiling(point.z + 0.01f) - 0.5f);
             }
-
 
             return highlightPosition;
         } else {
@@ -97,7 +100,7 @@ public class Interact : MonoBehaviour
     public void removeBlock() {
         Vector3 block = checkLookingAt();
         if(block.y > 1) {
-            WorldGenerator.removeBlock(block);
+            MeshInstance.removeBlock(block);
         }
     }
 

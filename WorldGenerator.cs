@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
-using UnityEngine.Rendering;
 
 public enum Heading
 {
@@ -39,7 +36,7 @@ public class WorldGenerator : MonoBehaviour
     public Material material;
     public Material material2;
     
-    static MeshInstance[] meshList;
+
 
     Mesh cubeMesh;
     RenderParams[] rps;
@@ -66,7 +63,6 @@ public class WorldGenerator : MonoBehaviour
 
 
     int standardHeight = 7;
-    float[,,] heightMap = new float[2000,2000,256];
 
     static int playerChunkX;
     static int playerChunkZ;
@@ -82,7 +78,7 @@ public class WorldGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        meshList = new MeshInstance[600];
+        
 
         chunksLoaded = new List<Vector2>();
         chunksQueued = new Queue<Vector2>();
@@ -109,7 +105,7 @@ public class WorldGenerator : MonoBehaviour
         rps[9] = new RenderParams(materialConstructor.materials[9]);
         rps[10] = new RenderParams(materialConstructor.materials[10]);
 
-        GenerateHeightMap();
+        
 
         for(int x = -renderDistance; x < renderDistance; x++) {
             for(int z = -renderDistance; z < renderDistance; z++) {
@@ -155,7 +151,7 @@ public class WorldGenerator : MonoBehaviour
         
 
         int i = 0;
-        foreach(MeshInstance instance in meshList)
+        foreach(MeshInstance instance in MeshInstance.meshList)
         {
             if(instance != null) {
                 if((instance.chunkX < playerChunkX - renderDistance || instance.chunkX > playerChunkX + renderDistance) || (instance.chunkZ < playerChunkZ - renderDistance || instance.chunkZ > playerChunkZ + renderDistance)) {
@@ -169,7 +165,7 @@ public class WorldGenerator : MonoBehaviour
                         a++;
                     }
                     Destroy(GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")"));
-                    meshList[i] = null;
+                    MeshInstance.meshList[i] = null;
                     MeshPooling.meshPrefabs[i].triangles = null;
                     break;
                 }
@@ -209,7 +205,7 @@ public class WorldGenerator : MonoBehaviour
             heading = Heading.North;
         }
 
-            foreach(MeshInstance meshInstance in meshList){
+            foreach(MeshInstance meshInstance in MeshInstance.meshList){
                 if(meshInstance != null) {
                     for(int submeshIndex = 1; submeshIndex < meshInstance.mesh.subMeshCount; submeshIndex++) {
                         Graphics.RenderMesh(rps[submeshIndex - 1], meshInstance.mesh, submeshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
@@ -227,95 +223,36 @@ public class WorldGenerator : MonoBehaviour
 
     void GenerateChunk(int chunkX, int chunkZ)
     {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
         //int cubeNumber = 0;
         GameObject chunk = Instantiate(chunkPrefab, new Vector3(chunkX * 16, 0, chunkZ * 16), Quaternion.identity);
         chunk.name = "Chunk(" + chunkX + "," + chunkZ + ")";
         //MeshFilter meshFilter = chunk.GetComponent<MeshFilter> ();
         //Renderer renderer = chunk.GetComponent<Renderer>();
         MeshCollider meshCollider = chunk.GetComponent<MeshCollider>();
-        watch.Stop();
-        Debug.Log("Instantiating takes: " + watch.ElapsedMilliseconds + "ms");
-        
-        watch = System.Diagnostics.Stopwatch.StartNew();
-        
-        
-        watch.Stop();
-        Debug.Log("Calculating heightmap takes: " + watch.ElapsedMilliseconds + "ms");
 
-        
-        watch = System.Diagnostics.Stopwatch.StartNew();
-        
-        int[] meshTriangles = new int[600000];
-        int[] meshDirtTriangles = new int[600000];
-        int[] meshBedrockTriangles = new int[600000];
-        int[] meshStoneTriangles = new int[600000];
-        int trianglesCount = 0;
-        int dirtTrianglesCount = 0;
-        int bedrockTrianglesCount = 0;
-        int stoneTrianglesCount = 0;
         int heightMapPosition = 0;
+        int[] blockIds = new int[65536];
         
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
-                Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, (int) (heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight, z))), 0, meshTriangles, trianglesCount, 36);
-                trianglesCount += 36;
-                Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, 0, z))), 0, meshBedrockTriangles, bedrockTrianglesCount, 36);
-                bedrockTrianglesCount += 36;
+                blockIds[calculateCubeIndex(new Vector3(x, (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight, z))] = 1;
+                blockIds[calculateCubeIndex(new Vector3(x, 0, z))] = 3;
                 for(int y = 1; y < standardHeight; y++) {
-                    Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, y, z))), 0, meshStoneTriangles, stoneTrianglesCount, 36);
-                    stoneTrianglesCount += 36;
+                    blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 4;
                 }
-                for(int y = standardHeight; y < (int) (heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight; y++) {
-                    Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(x, y, z))), 0, meshDirtTriangles, dirtTrianglesCount, 36);
-                    dirtTrianglesCount += 36;
+                for(int y = standardHeight; y < (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight; y++) {
+                    blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 2;
                 }
                 heightMapPosition++;
             }
         }
-        
-        
-        //Array.Copy(calculateTriangles(0), 0, meshTriangles, 0, 36);
-        //Array.Copy(calculateTriangles(calculateCubeIndex(new Vector3(0, 0, 10))), 0, meshTriangles, 36, 36);
-        Array.Resize(ref meshTriangles, trianglesCount);
-        Array.Resize(ref meshDirtTriangles, dirtTrianglesCount);
-        Array.Resize(ref meshBedrockTriangles, bedrockTrianglesCount);
-        Array.Resize(ref meshStoneTriangles, stoneTrianglesCount);
-        watch.Stop();
-        Debug.Log("Calculating triangles takes: " + watch.ElapsedMilliseconds + "ms");
 
 
-
-        watch = System.Diagnostics.Stopwatch.StartNew();
-        
-        watch.Stop();
         int meshCount = getFreeMesh();
         Mesh mesh = MeshPooling.meshPrefabs[meshCount];
-        Debug.Log("Setting mesh takes: " + watch.ElapsedMilliseconds + "ms");
 
-
-
-        watch = System.Diagnostics.Stopwatch.StartNew();
-        mesh.subMeshCount = 11;
-        mesh.SetTriangles(meshTriangles, 1);
-        mesh.SetTriangles(meshDirtTriangles, 2);
-        mesh.SetTriangles(meshBedrockTriangles, 3);
-        mesh.SetTriangles(meshStoneTriangles, 4);
-        
-        mesh.RecalculateNormals ();
-        watch.Stop();
-        Debug.Log("Setting triangles takes: " + watch.ElapsedMilliseconds + "ms");
-
-
-        
-        watch = System.Diagnostics.Stopwatch.StartNew();
-        meshCollider.sharedMesh = mesh;
-        watch.Stop();
-        Debug.Log("Setting collider takes: " + watch.ElapsedMilliseconds + "ms");
-    
-
-
-        meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ);
+        MeshInstance.meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ, blockIds);
+        meshCollider.sharedMesh = MeshInstance.meshList[meshCount].mesh;
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
 
@@ -328,57 +265,25 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-    float[] CalculateHeights(Vector2[] map) {
-        return NoiseS3D.NoiseArrayGPU(map, 0.01f, true);
-    }
+    
 
-
-    public static void removeBlock(Vector3 block) {
-        //int cubeIndex = calculateCubeIndex(block);
-        //int[] newTriangles = Array.FindAll(array, i => i != item).ToArray();
-        Vector2 chunkVector = getChunk(block);
-        Vector3 blockVector = getBlock(block);
-        int cubeIndex = calculateCubeIndex(blockVector);
-        foreach(MeshInstance instance in meshList) {
-            if(instance.chunkX == chunkVector.x && instance.chunkZ == chunkVector.y) {
-                
-                for(int subMeshIndex = 1; subMeshIndex < instance.mesh.subMeshCount; subMeshIndex++) {
-                    int[] newTriangles = instance.mesh.GetTriangles(subMeshIndex);
-                    for(int i = 0; i < 14; i++) {
-                        newTriangles = newTriangles.Where(e => (e != (cubeIndex * 14) + i)).ToArray();
-                    }
-                    instance.mesh.SetTriangles(newTriangles, subMeshIndex);
-                    instance.mesh.RecalculateNormals();
-                }
-                //Debug.Log("SubMeshCount: " + instance.mesh.subMeshCount);
-                //instance.mesh.SetTriangles(calculateTriangles(calculateCubeIndex(blockVector - new Vector3(0, -1, 0))), 1);
-                GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
-                break;
-            }
-        }
-
-    }
+    
 
 
     public static void setBlock(Vector3 block) {
-        Vector2 chunkVector = getChunk(block);
-        Vector3 blockVector = getBlock(block);
+        Vector2 chunkVector = MeshInstance.getChunk(block);
+        Vector3 blockVector = MeshInstance.getBlock(block);
         int cubeIndex = calculateCubeIndex(blockVector);
-        foreach(MeshInstance instance in meshList) {
-            if(instance.chunkX == chunkVector.x && instance.chunkZ == chunkVector.y) {
-                int HotBarFocus = Menu.HotBarFocus + 1;
-                int[] oldTriangles = instance.mesh.GetTriangles(HotBarFocus);
-                int[] newTriangles = new int[oldTriangles.Length + 36];
-                Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
-                Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
-                instance.mesh.SetTriangles(newTriangles, HotBarFocus);
-                instance.mesh.RecalculateNormals();
+        MeshInstance instance = MeshInstance.findMeshInstance(chunkVector);
+        int HotBarFocus = Menu.HotBarFocus + 1;
+        int[] oldTriangles = instance.mesh.GetTriangles(HotBarFocus);
+        int[] newTriangles = new int[oldTriangles.Length + 36];
+        Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
+        Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
+        instance.mesh.SetTriangles(newTriangles, HotBarFocus);
+        //instance.mesh.RecalculateNormals();
 
-                GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
-
-                break;
-            }
-        }
+        GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
     }
 
     public static int[] calculateTriangles(int cubeNumber) {
@@ -393,12 +298,12 @@ public class WorldGenerator : MonoBehaviour
         triangles[5] = 3 + (cubeNumber * 14);
 
         triangles[6] = 1 + (cubeNumber * 14);
-        triangles[7] = 4 + (cubeNumber * 14);
-        triangles[8] = 3 + (cubeNumber * 14);
+        triangles[7] = 3 + (cubeNumber * 14);
+        triangles[8] = 4 + (cubeNumber * 14);
 
         triangles[9] = 3 + (cubeNumber * 14);
-        triangles[10] = 4 + (cubeNumber * 14);
-        triangles[11] = 5 + (cubeNumber * 14);
+        triangles[10] = 5 + (cubeNumber * 14);
+        triangles[11] = 4 + (cubeNumber * 14);
 
 
         triangles[12] = 4 + (cubeNumber * 14);
@@ -447,59 +352,13 @@ public class WorldGenerator : MonoBehaviour
         return x + (z * 16) + (y * 256);
     }
 
-    public static Vector2 getChunk(Vector3 vector) {
-        int chunkX = (int) ((vector.x) / 16);
-        int chunkZ = (int) ((vector.z) / 16);
+    
 
-        if(vector.x < 0) {
-            chunkX -= 1;
-        }
-
-        if(vector.z < 0) {
-            chunkZ -= 1;
-        }
-
-        return new Vector2(chunkX, chunkZ);
-    }
-
-    public static Vector3 getBlock(Vector3 vector) {
-        int x = (int) ((vector.x) % 16);
-        int z = (int) ((vector.z) % 16);
-
-        if(((vector.x) % 16) < 0) {
-            x += 15;
-        }
-
-        if(((vector.z) % 16) < 0) {
-            z += 15;
-        }
-
-        return new Vector3(x, vector.y, z);
-    }
-
-    public void GenerateHeightMap() {
-        for(int chunkX = -50; chunkX < 50; chunkX++) {
-            for(int chunkZ = -50; chunkZ < 50; chunkZ++) {
-                int i = 0;
-                Vector2[] noiseMap = new Vector2[256];
-                for(int x = 0; x < 16; x++) {
-                    for(int z = 0; z < 16; z++) {
-                        noiseMap[i] = new Vector2(x + (chunkX * 16), (chunkZ * 16) + z);
-                        i++;
-                    }
-                }
-                float[] singleHeightMap = CalculateHeights(noiseMap);
-                for(int a = 0; a < 256; a++) {
-                    heightMap[chunkX + 1000, chunkZ + 1000, a] = singleHeightMap[a];
-                }
-            }
-        }
-
-    }
+    
 
     public int getFreeMesh() {
         int i = 0;
-        foreach(MeshInstance instance in meshList) {
+        foreach(MeshInstance instance in MeshInstance.meshList) {
             if(instance == null) {
                 return i;
             }
@@ -507,6 +366,11 @@ public class WorldGenerator : MonoBehaviour
         }
         return i;
     }
+
+
+
+
+ 
 
 
 
