@@ -60,7 +60,6 @@ public class Interact : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 3.0f)) {
             Vector3 point = hit.point;
-            Debug.Log(hit.normal);
             if(hit.normal.y >= 0) {
                 if(hit.normal.x < 0) {
                     if(hit.normal.z < 0) {
@@ -108,7 +107,7 @@ public class Interact : MonoBehaviour
     public void setBlock() {
         Vector3 block = checkLookingAt();
         if(block.y > 0) {
-            WorldGenerator.setBlock(getRelativeBlock());
+            MeshInstance.setBlock(getRelativeBlock());
         }
     }
 }

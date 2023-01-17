@@ -73,11 +73,8 @@ public class MeshPooling : MonoBehaviour
 
         for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
-            yield return new WaitForSeconds(0.001f);         
-            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 1520 * (progress / 100.0f));
-            if(i % 2 == 0) {
-                progress++;
-            }
+            loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (i / meshCount) * 1520);
+            yield return new WaitForSeconds(0.001f);
         }
         GenerateHeightMap();
         loadingScreen.SetActive(false);
@@ -92,7 +89,7 @@ public class MeshPooling : MonoBehaviour
 
 
     public void GenerateHeightMap() {
-        for(int chunkX = -625; chunkX < 625; chunkX++) {
+        for(int chunkX = -50; chunkX < 50; chunkX++) {
             for(int chunkZ = -50; chunkZ < 50; chunkZ++) {
                 int i = 0;
                 Vector2[] noiseMap = new Vector2[256];

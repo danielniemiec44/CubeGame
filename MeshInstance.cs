@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class MeshInstance
 {
@@ -121,12 +122,33 @@ public class MeshInstance
             instance.blockIds[cubeIndex] = 0;
             int[] newTriangles = instance.mesh.GetTriangles(blockId);
             for(int i = 0; i < 14; i++) {
-                newTriangles = Array.FindAll(newTriangles, i => (i != (cubeIndex * 14) + i));
+                newTriangles = newTriangles.Where(e => (e != (cubeIndex * 14) + i)).ToArray();
             }
             instance.mesh.SetTriangles(newTriangles, blockId);
             GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
         }
     }
+
+
+     public static void setBlock(Vector3 block) {
+        Vector2 chunkVector = MeshInstance.getChunk(block);
+        Vector3 blockVector = MeshInstance.getBlock(block);
+        int cubeIndex = WorldGenerator.calculateCubeIndex(blockVector);
+        MeshInstance instance = findMeshInstance(chunkVector);
+        int HotBarFocus = Menu.HotBarFocus + 1;
+        instance.blockIds[cubeIndex] = HotBarFocus;
+        int[] oldTriangles = instance.mesh.GetTriangles(HotBarFocus);
+        int[] newTriangles = new int[oldTriangles.Length + 36];
+        Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
+        Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
+        instance.mesh.SetTriangles(newTriangles, HotBarFocus);
+        //instance.mesh.RecalculateNormals();
+
+        GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
+    }
+
+
+
 
 
     public static Vector2 getChunk(Vector3 vector) {
@@ -162,11 +184,16 @@ public class MeshInstance
 
         public static MeshInstance findMeshInstance(Vector2 chunkVector) {
         foreach(MeshInstance instance in MeshInstance.meshList) {
-            if(instance.chunkX == chunkVector.x && instance.chunkZ == chunkVector.y) {
-                return instance;
+            if(instance != null) {
+                if(instance.chunkX == chunkVector.x && instance.chunkZ == chunkVector.y) {
+                    return instance;
+                }
             }
         }
         return null;
     }
+
+
+    
 
 }

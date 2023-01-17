@@ -270,21 +270,7 @@ public class WorldGenerator : MonoBehaviour
     
 
 
-    public static void setBlock(Vector3 block) {
-        Vector2 chunkVector = MeshInstance.getChunk(block);
-        Vector3 blockVector = MeshInstance.getBlock(block);
-        int cubeIndex = calculateCubeIndex(blockVector);
-        MeshInstance instance = MeshInstance.findMeshInstance(chunkVector);
-        int HotBarFocus = Menu.HotBarFocus + 1;
-        int[] oldTriangles = instance.mesh.GetTriangles(HotBarFocus);
-        int[] newTriangles = new int[oldTriangles.Length + 36];
-        Array.Copy(oldTriangles, newTriangles, oldTriangles.Length);
-        Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
-        instance.mesh.SetTriangles(newTriangles, HotBarFocus);
-        //instance.mesh.RecalculateNormals();
-
-        GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
-    }
+   
 
     public static int[] calculateTriangles(int cubeNumber) {
         int[] triangles = new int[36];

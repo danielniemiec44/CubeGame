@@ -37,7 +37,6 @@ public Menu menu;
             System.IO.Directory.CreateDirectory(path + "/resourcepacks/extracted/default");
             ZipFile.ExtractToDirectory(path + "/resourcepacks/default.zip", path + "/resourcepacks/extracted/default");
         }
-        MeshPooling.progress += 40;
         
 
 
@@ -55,7 +54,6 @@ public Menu menu;
             StartCoroutine(LoadTextureFromCache("dark_oak_log", 8));
             StartCoroutine(LoadTextureFromCache("spruce_log", 9));
             StartCoroutine(LoadTextureFromCache("jungle_log", 10));
-            MeshPooling.progress += 10;
         //} catch(Exception e) {
         //    menu.HandleError(e.ToString());
         //}
