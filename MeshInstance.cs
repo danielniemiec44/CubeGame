@@ -8,8 +8,12 @@ public class MeshInstance
     public int chunkX;
     public int chunkZ;
     public Mesh mesh;
-    public int[] blockIds = new int[65536];
+    int[] blockIds = new int[65536];
     public static MeshInstance[] meshList = new MeshInstance[600];
+    List<int> blockIdConnected = new List<int>();
+    int[] trianglesLenth = new int[11];
+    int[,] triangles = new int[11, 2359296];
+    
 
 
 
@@ -110,8 +114,8 @@ public class MeshInstance
             instance.mesh.SetTriangles(newTriangles, blockId);
             */
             instance.updateMesh();
-            GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
-        }
+            instance.updateConnections(block);
+            }
     }
 
 
@@ -129,8 +133,7 @@ public class MeshInstance
         instance.mesh.SetTriangles(newTriangles, HotBarFocus);
         //instance.mesh.RecalculateNormals();
         instance.updateMesh();
-        GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
-    }
+        }
 
 
 
@@ -181,26 +184,31 @@ public class MeshInstance
 
     public void updateMesh() {
         mesh.subMeshCount = 11;
-        int[,] triangles = new int[11, 2359296];
-        int[] trianglesLenth = new int[11];
+        trianglesLenth = new int[11];
+        triangles = new int[11, 2359296];
+        
         for(int blockId = 0; blockId < 65536; blockId++) {
             if(blockIds[blockId] != 0) {
-                if(
-                    !((blockId - 1 > 0 && blockId + 1 < 65536 && blockId - 16 > 0 && blockId + 16 < 65536 && blockId - 256 > 0 && blockId + 256 < 65536) &&
-                    (blockIds[blockId - 1] != 0 && blockIds[blockId + 1] != 0 &&
-                    blockIds[blockId - 16] != 0 && blockIds[blockId + 16] != 0 &&
-                    blockIds[blockId - 256] != 0 && blockIds[blockId + 256] != 0)) &&
-                    blockId != 0 && blockId != 65536
-                ) {
-                    int[] cubeTriangles = calculateTriangles(blockId);
-                    for(int i = 0; i < 36; i++) {
-                        triangles[blockIds[blockId] - 1, trianglesLenth[blockIds[blockId] - 1] + i] = cubeTriangles[i];
+                if((blockId - 1 > 0 && blockId + 1 < 65536 && blockId - 16 > 0 && blockId + 16 < 65536 && blockId - 256 > 0 && blockId + 256 < 65536)) {
+                    if(
+                        !((blockIds[blockId - 1] != 0 && blockIds[blockId + 1] != 0 &&
+                        blockIds[blockId - 16] != 0 && blockIds[blockId + 16] != 0 &&
+                        blockIds[blockId - 256] != 0 && blockIds[blockId + 256] != 0))
+                    ) {
+                        updateTrianglesArray(blockId);
                     }
-                    trianglesLenth[blockIds[blockId] - 1] += 36;
+                } else {
+                    
                 }
+                
                 
             }
         }
+        
+        foreach(int conn in blockIdConnected) {
+            updateTrianglesArray(conn);
+        }
+
         for(int i = 0; i < 10; i++) {
             int[] resizedTriangles = new int[trianglesLenth[i]];
             for(int a = 0; a < trianglesLenth[i]; a++) {
@@ -208,6 +216,51 @@ public class MeshInstance
             }
             mesh.SetTriangles(resizedTriangles, i + 1);
         }
+        GameObject.Find("Chunk(" + chunkX + "," + chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
+
+    public void updateConnections(Vector3 block) {
+        Vector3 blockVector = getBlock(block);
+        Vector2 chunkVector = getChunk(block);
+        MeshInstance meshConn = null;
+        MeshInstance meshConn2 = null;
+        Vector3 newBlockVector = blockVector;
+        Vector3 newBlockVector2 = blockVector;
+        
+        if(blockVector.x == 15) {
+            meshConn = findMeshInstance(new Vector2(chunkVector.x + 1, chunkVector.y));
+            newBlockVector = new Vector3(0, blockVector.y, blockVector.z);
+        } else if(blockVector.x == 0) {
+            meshConn = findMeshInstance(new Vector2(chunkVector.x - 1, chunkVector.y));
+            newBlockVector = new Vector3(15, blockVector.y, blockVector.z);
+        }
+        if(blockVector.z == 15) {
+            meshConn2 = findMeshInstance(new Vector2(chunkVector.x, chunkVector.y + 1));
+            newBlockVector2 = new Vector3(blockVector.x, blockVector.y, 0);
+        } else if(blockVector.z == 0) {
+            meshConn2 = findMeshInstance(new Vector2(chunkVector.x, chunkVector.y - 1));
+            newBlockVector2 = new Vector3(blockVector.x, blockVector.y, 15);
+        }
+        if(meshConn != null) {
+            Debug.Log(chunkVector + " " + newBlockVector);
+            meshConn.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector));
+            meshConn.updateMesh();
+        }
+        if(meshConn2 != null) {
+            Debug.Log(chunkVector + " " + newBlockVector2);
+            meshConn2.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector2));
+            meshConn2.updateMesh();
+        }
+    }
+
+    public void updateTrianglesArray(int blockId) {
+        int[] cubeTriangles = calculateTriangles(blockId);
+        if(blockIds[blockId] != 0) {
+            for(int i = 0; i < 36; i++) {
+                triangles[blockIds[blockId] - 1, trianglesLenth[blockIds[blockId] - 1] + i] = cubeTriangles[i];
+            }
+            trianglesLenth[blockIds[blockId] - 1] += 36;
+        }
+    }
 }

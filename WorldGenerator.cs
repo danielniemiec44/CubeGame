@@ -62,7 +62,7 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-    int standardHeight = 7;
+    int standardHeight = 70;
 
     static int playerChunkX;
     static int playerChunkZ;
@@ -87,7 +87,7 @@ public class WorldGenerator : MonoBehaviour
         
         
 
-        player.transform.position = new Vector3(0, 20, 0);
+        player.transform.position = new Vector3(0, 100, 0);
         
         menu.hideBackground();
         
@@ -336,6 +336,14 @@ public class WorldGenerator : MonoBehaviour
         int z = (int) vector.z;
 
         return x + (z * 16) + (y * 256);
+    }
+
+    public static Vector3 calculateCubeVector(int cubeIndex) {
+        float blockX = cubeIndex % 16;
+        float blockY = (int) (cubeIndex / 256);
+        float blockZ = (int) ((cubeIndex - (blockY * 256)) / 16);
+
+        return new Vector3(blockX, blockY, blockZ);
     }
 
     
