@@ -12,7 +12,7 @@ public class MeshPooling : MonoBehaviour
     public RectTransform loadingBarTransform;
     public GameObject loadingScreen;
 
-    public static float[,,] heightMap = new float[2000,2000,256];
+    public static float[,,] heightMap = new float[100,100,256];
 
     public static int progress = 0;
     
@@ -24,7 +24,7 @@ public class MeshPooling : MonoBehaviour
     {
         Application.targetFrameRate = 9999;
         int cubeNumber = 0;
-        for(int y = 0; y < 256; y++) {
+        for(int y = 0; y < 16; y++) {
             for(int z = 0; z < 16; z++) {
                 for(int x = 0; x < 16; x++) {
                     vertices[(cubeNumber * 14)] = new Vector3(x + 0, y + 1, z + 0);
@@ -69,7 +69,7 @@ public class MeshPooling : MonoBehaviour
         mesh.normals = vertices;
         mesh.uv = uv;
         mesh.normals = vertices;
-        float meshCount = 100.0f;
+        float meshCount = 200.0f;
 
         for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
@@ -95,13 +95,15 @@ public class MeshPooling : MonoBehaviour
                 Vector2[] noiseMap = new Vector2[256];
                 for(int x = 0; x < 16; x++) {
                     for(int z = 0; z < 16; z++) {
-                        noiseMap[i] = new Vector2(x + (chunkX * 16), (chunkZ * 16) + z);
+                        noiseMap[i] = new Vector3(x + (chunkX * 16), (chunkZ * 16) + z);
                         i++;
                     }
                 }
                 float[] singleHeightMap = CalculateHeights(noiseMap);
                 for(int a = 0; a < 256; a++) {
-                    heightMap[chunkX + 1000, chunkZ + 1000, a] = singleHeightMap[a];
+                    singleHeightMap[a] += 7.0f;
+
+                    heightMap[chunkX + 50, chunkZ + 50, a] = singleHeightMap[a];
                 }
             }
         }

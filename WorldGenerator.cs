@@ -59,13 +59,9 @@ public class WorldGenerator : MonoBehaviour
     public MaterialConstructor materialConstructor;
 
 
-
-
-
-    int standardHeight = 70;
-
     static int playerChunkX;
     static int playerChunkZ;
+    static int playerChunkY;
 
     
 
@@ -109,10 +105,11 @@ public class WorldGenerator : MonoBehaviour
 
         for(int x = -renderDistance; x < renderDistance; x++) {
             for(int z = -renderDistance; z < renderDistance; z++) {
-                GenerateChunk(x, z);
+                for(int y = -2; y < 2; y++) {
+                    GenerateChunk(x, y, z);
+                }
             }
         }
-
     }
 
 
@@ -123,16 +120,18 @@ public class WorldGenerator : MonoBehaviour
         
         playerChunkX = (int) (player.transform.position.x / 16);
         playerChunkZ = (int) (player.transform.position.z / 16);
+        playerChunkY = (int) (player.transform.position.y / 16);
 
         
 
 
         for(int x = playerChunkX - renderDistance; x < playerChunkX + renderDistance; x++) {
             for(int z = playerChunkZ - renderDistance; z < playerChunkZ + renderDistance; z++) {
-                Vector2 chunk = new Vector2(x, z);
-                if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
-                    chunksQueued.Enqueue(new Vector2(x, z));
-                }
+                for(int y = playerChunkY - 2; y < playerChunkY + 2; y++) {
+                    Vector3 chunk = new Vector3(x, y, z);
+                    if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
+                        chunksQueued.Enqueue(new Vector3(x, y, z));
+                    }
             }
         }
             
@@ -140,8 +139,8 @@ public class WorldGenerator : MonoBehaviour
 
         if(framesBehind > framesInterval) {
             if(chunksQueued.Count != 0) {
-                Vector2 chunk = chunksQueued.Dequeue();
-                GenerateChunk((int) chunk.x, (int) chunk.y);
+                Vector3 chunk = chunksQueued.Dequeue();
+                GenerateChunk((int) chunk.x, (int) chunk.y, (int) chunk.z);
             }
             framesBehind = 0;
         }
@@ -154,17 +153,17 @@ public class WorldGenerator : MonoBehaviour
         foreach(MeshInstance instance in MeshInstance.meshList)
         {
             if(instance != null) {
-                if((instance.chunkX < playerChunkX - renderDistance || instance.chunkX > playerChunkX + renderDistance) || (instance.chunkZ < playerChunkZ - renderDistance || instance.chunkZ > playerChunkZ + renderDistance)) {
+                if((instance.chunkX < playerChunkX - renderDistance || instance.chunkX > playerChunkX + renderDistance) || (instance.chunkZ < playerChunkZ - renderDistance || instance.chunkZ > playerChunkZ + renderDistance || instance.chunkY > playerChunkY + 2 || instance.chunkY < playerChunkY - 2)) {
                     //Vector2 oldChunk = new Vector2(instance.chunkX, instance.chunkZ);
                     int a = 0;
-                    foreach(Vector2 oldChunk in chunksLoaded) {
-                        if(oldChunk.x == instance.chunkX && oldChunk.y == instance.chunkZ) {
+                    foreach(Vector3 oldChunk in chunksLoaded) {
+                        if(oldChunk.x == instance.chunkX && oldChunk.z == instance.chunkZ && oldChunk.y == instance.chunkY) {
                             chunksLoaded.Remove(oldChunk);
                             break;
                         }
                         a++;
                     }
-                    Destroy(GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")"));
+                    Destroy(GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkY + "," + instance.chunkZ + ")"));
                     MeshInstance.meshList[i] = null;
                     MeshPooling.meshPrefabs[i].triangles = null;
                     break;
@@ -208,24 +207,25 @@ public class WorldGenerator : MonoBehaviour
             foreach(MeshInstance meshInstance in MeshInstance.meshList){
                 if(meshInstance != null) {
                     for(int submeshIndex = 1; submeshIndex < meshInstance.mesh.subMeshCount; submeshIndex++) {
-                        Graphics.RenderMesh(rps[submeshIndex - 1], meshInstance.mesh, submeshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                        Graphics.RenderMesh(rps[submeshIndex - 1], meshInstance.mesh, submeshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, meshInstance.chunkY * 16, meshInstance.chunkZ * 16)));
                     }
                 }
             }
             
         //}
             }
+    }
 
 
 
 
 
 
-    void GenerateChunk(int chunkX, int chunkZ)
+    void GenerateChunk(int chunkX, int chunkY, int chunkZ)
     {
         //int cubeNumber = 0;
-        GameObject chunk = Instantiate(chunkPrefab, new Vector3(chunkX * 16, 0, chunkZ * 16), Quaternion.identity);
-        chunk.name = "Chunk(" + chunkX + "," + chunkZ + ")";
+        GameObject chunk = Instantiate(chunkPrefab, new Vector3(chunkX * 16, chunkY * 16, chunkZ * 16), Quaternion.identity);
+        chunk.name = "Chunk(" + chunkX + "," + chunkY + "," + chunkZ + ")";
         //MeshFilter meshFilter = chunk.GetComponent<MeshFilter> ();
         //Renderer renderer = chunk.GetComponent<Renderer>();
         MeshCollider meshCollider = chunk.GetComponent<MeshCollider>();
@@ -235,13 +235,21 @@ public class WorldGenerator : MonoBehaviour
         
         for(int x = 0; x < 16; x++) {
             for(int z = 0; z < 16; z++) {
-                blockIds[calculateCubeIndex(new Vector3(x, (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight, z))] = 1;
-                blockIds[calculateCubeIndex(new Vector3(x, 0, z))] = 3;
-                for(int y = 1; y < standardHeight; y++) {
-                    blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 4;
-                }
-                for(int y = standardHeight; y < (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight; y++) {
-                    blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 2;
+                int y = (int) (MeshPooling.heightMap[chunkX + 50, chunkZ + 50, heightMapPosition] * 10);
+                if(y > chunkY * 16 && y < (chunkY + 1) * 16) {
+                    y = (int) (y / 16);
+                blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 1;
+                    /*
+                    blockIds[calculateCubeIndex(new Vector3(x, 0, z))] = 3;
+                    for(int y = 1; y < standardHeight; y++) {
+                        blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 4;
+                    }
+                    for(int y = standardHeight; y < (int) (MeshPooling.heightMap[chunkX + 50, chunkY, chunkZ + 50, heightMapPosition] * 10); y++) {
+                        blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 2;
+                    }
+                    */
+                } else {
+                    blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 1;
                 }
                 heightMapPosition++;
             }
@@ -251,10 +259,10 @@ public class WorldGenerator : MonoBehaviour
         int meshCount = getFreeMesh();
         Mesh mesh = MeshPooling.meshPrefabs[meshCount];
 
-        MeshInstance.meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ, blockIds);
+        MeshInstance.meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkY, chunkZ, blockIds);
         meshCollider.sharedMesh = MeshInstance.meshList[meshCount].mesh;
 
-        chunksLoaded.Add(new Vector2(chunkX, chunkZ));
+        chunksLoaded.Add(new Vector3(chunkX, chunkY, chunkZ));
 
 
         
@@ -272,7 +280,7 @@ public class WorldGenerator : MonoBehaviour
 
    
 
-    public static int[] calculateTriangles(int cubeNumber) {
+    static int[] calculateTriangles(int cubeNumber) {
         int[] triangles = new int[36];
 
         triangles[0] = 0 + (cubeNumber * 14);
@@ -338,7 +346,7 @@ public class WorldGenerator : MonoBehaviour
         return x + (z * 16) + (y * 256);
     }
 
-    public static Vector3 calculateCubeVector(int cubeIndex) {
+    static Vector3 calculateCubeVector(int cubeIndex) {
         float blockX = cubeIndex % 16;
         float blockY = (int) (cubeIndex / 256);
         float blockZ = (int) ((cubeIndex - (blockY * 256)) / 16);

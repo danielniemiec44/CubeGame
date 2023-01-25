@@ -6,6 +6,7 @@ using System.Linq;
 public class MeshInstance
 {
     public int chunkX;
+    public int chunkY;
     public int chunkZ;
     public Mesh mesh;
     int[] blockIds = new int[65536];
@@ -29,9 +30,10 @@ public class MeshInstance
         
     }
 
-    public MeshInstance(Mesh mesh, int chunkX, int chunkZ, int[] blockIds) {
+    public MeshInstance(Mesh mesh, int chunkX, int chunkY, int chunkZ, int[] blockIds) {
         this.mesh = mesh;
         this.chunkX = chunkX;
+        this.chunkY = chunkY;
         this.chunkZ = chunkZ;
         this.blockIds = blockIds;
 
@@ -216,7 +218,7 @@ public class MeshInstance
             }
             mesh.SetTriangles(resizedTriangles, i + 1);
         }
-        GameObject.Find("Chunk(" + chunkX + "," + chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = mesh;
+        GameObject.Find("Chunk(" + chunkX + "," + chunkY + "," + chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
 
