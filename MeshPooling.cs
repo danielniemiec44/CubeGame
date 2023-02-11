@@ -101,7 +101,7 @@ public class MeshPooling : MonoBehaviour
                 }
                 float[] singleHeightMap = CalculateHeights(noiseMap);
                 for(int a = 0; a < 256; a++) {
-                    heightMap[chunkX + 1000, chunkZ + 1000, a] = singleHeightMap[a];
+                    heightMap[chunkX + 1000, chunkZ + 1000, a] = Mathf.Pow(singleHeightMap[a], 2.0f);
                 }
             }
         }

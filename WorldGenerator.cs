@@ -30,7 +30,7 @@ public class WorldGenerator : MonoBehaviour
 
     Menu menu;
 
-    int framesInterval = 0;
+    int framesInterval = 10;
     int framesBehind = 0;
 
     public Material material;
