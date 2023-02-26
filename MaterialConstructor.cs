@@ -80,7 +80,7 @@ public Menu menu;
 
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3, UnityEngine.Experimental.Rendering.DefaultFormat.LDR, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
-                generatedTexture.filterMode = FilterMode.Trilinear;
+                generatedTexture.filterMode = FilterMode.Point;
 
                 for(int x = 0; x < texture2.width; x++){
                     for(int y = 0; y < texture2.height; y++){
@@ -123,7 +123,7 @@ public Menu menu;
                 Texture2D texture1Rotated3 = rotateTexture(texture1Rotated, false);
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3, UnityEngine.Experimental.Rendering.DefaultFormat.LDR, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
-                generatedTexture.filterMode = FilterMode.Trilinear;
+                generatedTexture.filterMode = FilterMode.Point;
                 
                 Graphics.CopyTexture(texture1, 0, 0, 0, 0, texture1.width, texture1.height, generatedTexture, 0, 0, texture1.width, texture1.height * 2);
                 Graphics.CopyTexture(texture1Rotated, 0, 0, 0, 0, texture1Rotated.width, texture1Rotated.height, generatedTexture, 0, 0, 0, texture1Rotated.height);
@@ -148,7 +148,7 @@ public Menu menu;
                 Texture2D texture1Rotated3 = rotateTexture(texture1Rotated, false);
 
                 Texture2D generatedTexture = new Texture2D(texture1.width * 4, texture1.height * 3, UnityEngine.Experimental.Rendering.DefaultFormat.LDR, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
-                generatedTexture.filterMode = FilterMode.Trilinear;
+                generatedTexture.filterMode = FilterMode.Point;
                 
                 Graphics.CopyTexture(texture1, 0, 0, 0, 0, texture1.width, texture1.height, generatedTexture, 0, 0, texture1.width, texture1.height * 2);
                 Graphics.CopyTexture(texture1Rotated, 0, 0, 0, 0, texture1Rotated.width, texture1Rotated.height, generatedTexture, 0, 0, 0, texture1Rotated.height);
