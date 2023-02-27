@@ -22,6 +22,8 @@ public class MeshPooling : MonoBehaviour
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        MeshInstance.meshUpdater = GetComponent<MeshUpdater>();
+
         Application.targetFrameRate = 9999;
         int cubeNumber = 0;
         for(int y = 0; y < 256; y++) {

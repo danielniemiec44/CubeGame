@@ -40,6 +40,7 @@ public class Menu : MonoBehaviour
     FirstPersonLook firstPersonLookComponent;
     public GameObject materials;
     public GameObject errorScreen;
+    public GameObject meshPooling;
 
 
 
@@ -53,6 +54,7 @@ public class Menu : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(eventSystem);
         DontDestroyOnLoad(materials);
+        DontDestroyOnLoad(meshPooling);
 
         darker.SetActive(false);
         background.SetActive(false);

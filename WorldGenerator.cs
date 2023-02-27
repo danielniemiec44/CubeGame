@@ -248,11 +248,11 @@ public class WorldGenerator : MonoBehaviour
         }
 
 
-        int meshCount = getFreeMesh();
-        Mesh mesh = MeshPooling.meshPrefabs[meshCount];
+        int freeMesh = getFreeMesh();
+        Mesh mesh = MeshPooling.meshPrefabs[freeMesh];
 
-        MeshInstance.meshList[meshCount] = new MeshInstance(mesh, chunkX, chunkZ, blockIds);
-        meshCollider.sharedMesh = MeshInstance.meshList[meshCount].mesh;
+        MeshInstance.meshList[freeMesh] = new MeshInstance(mesh, chunkX, chunkZ, blockIds, chunk, freeMesh);
+        
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
 

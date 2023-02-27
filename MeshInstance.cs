@@ -8,34 +8,26 @@ public class MeshInstance
     public int chunkX;
     public int chunkZ;
     public Mesh mesh;
-    int[] blockIds = new int[65536];
+    public int[] blockIds = new int[65536];
     public static MeshInstance[] meshList = new MeshInstance[600];
-    List<int> blockIdConnected = new List<int>();
-    int[] trianglesLenth = new int[11];
-    int[,] triangles = new int[11, 2359296];
+    public List<int> blockIdConnected = new List<int>();
+    public int[] trianglesLenth = new int[11];
+    public int[,] triangles = new int[11, 2359296];
+    public static MeshUpdater meshUpdater;
+    public GameObject chunkObject;
+    public int freeMesh;
     
 
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public MeshInstance(Mesh mesh, int chunkX, int chunkZ, int[] blockIds) {
+    public MeshInstance(Mesh mesh, int chunkX, int chunkZ, int[] blockIds, GameObject chunkObject, int freeMesh) {
         this.mesh = mesh;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.blockIds = blockIds;
+        this.chunkObject = chunkObject;
+        this.freeMesh = freeMesh;
+        
 
-        updateMesh();
+        meshUpdater.updateMeshAsync(this);
     }
 
 
@@ -113,8 +105,9 @@ public class MeshInstance
             }
             instance.mesh.SetTriangles(newTriangles, blockId);
             */
-            instance.updateMesh();
-            instance.updateConnections(block);
+            meshUpdater.updateMeshAsync(instance);
+            //instance.updateMesh();
+            //instance.updateMeshAsync(block);
             }
     }
 
@@ -132,7 +125,8 @@ public class MeshInstance
         Array.Copy(calculateTriangles(cubeIndex), 0, newTriangles, oldTriangles.Length, 36);
         instance.mesh.SetTriangles(newTriangles, HotBarFocus);
         //instance.mesh.RecalculateNormals();
-        instance.updateMesh();
+        //instance.updateMesh();
+        meshUpdater.updateMeshAsync(instance);
         }
 
 
@@ -182,42 +176,7 @@ public class MeshInstance
     }
 
 
-    public void updateMesh() {
-        mesh.subMeshCount = 11;
-        trianglesLenth = new int[11];
-        triangles = new int[11, 2359296];
-        
-        for(int blockId = 0; blockId < 65536; blockId++) {
-            if(blockIds[blockId] != 0) {
-                if((blockId - 1 > 0 && blockId + 1 < 65536 && blockId - 16 > 0 && blockId + 16 < 65536 && blockId - 256 > 0 && blockId + 256 < 65536)) {
-                    if(
-                        !((blockIds[blockId - 1] != 0 && blockIds[blockId + 1] != 0 &&
-                        blockIds[blockId - 16] != 0 && blockIds[blockId + 16] != 0 &&
-                        blockIds[blockId - 256] != 0 && blockIds[blockId + 256] != 0))
-                    ) {
-                        updateTrianglesArray(blockId);
-                    }
-                } else {
-                    
-                }
-                
-                
-            }
-        }
-        
-        foreach(int conn in blockIdConnected) {
-            updateTrianglesArray(conn);
-        }
-
-        for(int i = 0; i < 10; i++) {
-            int[] resizedTriangles = new int[trianglesLenth[i]];
-            for(int a = 0; a < trianglesLenth[i]; a++) {
-                resizedTriangles[a] = triangles[i, a];
-            }
-            mesh.SetTriangles(resizedTriangles, i + 1);
-        }
-        GameObject.Find("Chunk(" + chunkX + "," + chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = mesh;
-    }
+    
 
 
     public void updateConnections(Vector3 block) {
@@ -245,12 +204,14 @@ public class MeshInstance
         if(meshConn != null) {
             Debug.Log(chunkVector + " " + newBlockVector);
             meshConn.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector));
-            meshConn.updateMesh();
+            //meshConn.updateMesh();
+            meshUpdater.updateMeshAsync(meshConn);
         }
         if(meshConn2 != null) {
             Debug.Log(chunkVector + " " + newBlockVector2);
             meshConn2.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector2));
-            meshConn2.updateMesh();
+            //meshConn2.updateMesh();
+            meshUpdater.updateMeshAsync(meshConn2);
         }
     }
 
