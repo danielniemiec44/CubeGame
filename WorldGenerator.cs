@@ -84,6 +84,7 @@ public class WorldGenerator : MonoBehaviour
         chunksQueued = new Queue<Vector2>();
         canvas = GameObject.Find("Canvas");
         menu = canvas.GetComponent<Menu>();
+        player = GameObject.Find("Player");
         
         
 

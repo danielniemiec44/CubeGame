@@ -56,9 +56,9 @@ public class MeshUpdater : MonoBehaviour
             instance.mesh.SetTriangles(resizedTriangles, i + 1);
             Debug.Log("Triangles set!");
         }
-        GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
+        //GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")").GetComponent<MeshCollider>().sharedMesh = instance.mesh;
         
-        instance.chunkObject.GetComponent<MeshCollider>().sharedMesh = MeshInstance.meshList[instance.freeMesh].mesh;
+        instance.chunkObject.GetComponent<MeshCollider>().sharedMesh = instance.mesh;
         
         yield return null;
     }
