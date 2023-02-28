@@ -45,7 +45,8 @@ public class DebugScreen : MonoBehaviour
         float x = PlayerTransform.position.x;
         float y = PlayerTransform.position.y;
         float z = PlayerTransform.position.z;
-        leftSideString += "x: " + String.Format("{0:0.00}", x) + ", y: " + String.Format("{0:0.00}", y) + ", " + String.Format("{0:0.00}", z);
+        leftSideString += "x: " + String.Format("{0:0.00}", x) + ", y: " + String.Format("{0:0.00}", y) + ", z: " + String.Format("{0:0.00}", z) + "\n";
+        leftSideString += "Chunk x: " + MeshUpdater.playerChunkX + ", Chunk z: " + MeshUpdater.playerChunkZ;
         leftSideText.SetText(leftSideString);
     }
 }

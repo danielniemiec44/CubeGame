@@ -2,32 +2,47 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Diagnostics;
 
 public class MeshInstance
 {
     public int chunkX;
     public int chunkZ;
     public Mesh mesh;
-    public int[] blockIds = new int[65536];
-    public static MeshInstance[] meshList = new MeshInstance[600];
+    public int[] blockIds = new int[1048576];
+    public static MeshInstance[] meshList = new MeshInstance[200];
     public List<int> blockIdConnected = new List<int>();
     public int[] trianglesLenth = new int[11];
-    public int[,] triangles = new int[11, 2359296];
+    public int[,] triangles = new int[11, 200000];
     public static MeshUpdater meshUpdater;
     public GameObject chunkObject;
     public int freeMesh;
     
 
     public MeshInstance(Mesh mesh, int chunkX, int chunkZ, int[] blockIds, GameObject chunkObject, int freeMesh) {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         this.mesh = mesh;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
         this.blockIds = blockIds;
         this.chunkObject = chunkObject;
         this.freeMesh = freeMesh;
+
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("Constructing mesh instance takes: " + stopwatch.ElapsedMilliseconds + "ms!");
         
 
+
+
+        stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         meshUpdater.updateMeshAsync(this);
+
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("Updating mesh async takes: " + stopwatch.ElapsedMilliseconds + "ms!");
     }
 
 
@@ -134,8 +149,8 @@ public class MeshInstance
 
 
     public static Vector2 getChunk(Vector3 vector) {
-        int chunkX = (int) ((vector.x) / 16);
-        int chunkZ = (int) ((vector.z) / 16);
+        int chunkX = (int) ((vector.x) / WorldGenerator.chunkSize);
+        int chunkZ = (int) ((vector.z) / WorldGenerator.chunkSize);
 
         if(vector.x < 0) {
             chunkX -= 1;
@@ -149,14 +164,14 @@ public class MeshInstance
     }
 
     public static Vector3 getBlock(Vector3 vector) {
-        int x = (int) ((vector.x) % 16);
-        int z = (int) ((vector.z) % 16);
+        int x = (int) ((vector.x) % WorldGenerator.chunkSize);
+        int z = (int) ((vector.z) % WorldGenerator.chunkSize);
 
-        if(((vector.x) % 16) < 0) {
+        if(((vector.x) % WorldGenerator.chunkSize) < 0) {
             x += 15;
         }
 
-        if(((vector.z) % 16) < 0) {
+        if(((vector.z) % WorldGenerator.chunkSize) < 0) {
             z += 15;
         }
 
@@ -202,13 +217,13 @@ public class MeshInstance
             newBlockVector2 = new Vector3(blockVector.x, blockVector.y, 15);
         }
         if(meshConn != null) {
-            Debug.Log(chunkVector + " " + newBlockVector);
+            UnityEngine.Debug.Log(chunkVector + " " + newBlockVector);
             meshConn.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector));
             //meshConn.updateMesh();
             meshUpdater.updateMeshAsync(meshConn);
         }
         if(meshConn2 != null) {
-            Debug.Log(chunkVector + " " + newBlockVector2);
+            UnityEngine.Debug.Log(chunkVector + " " + newBlockVector2);
             meshConn2.blockIdConnected.Add(WorldGenerator.calculateCubeIndex(newBlockVector2));
             //meshConn2.updateMesh();
             meshUpdater.updateMeshAsync(meshConn2);

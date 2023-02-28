@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
+using System;
 
 public class MeshPooling : MonoBehaviour
 {
-    public static Mesh[] meshPrefabs = new Mesh[1000];
-    Vector3[] vertices = new Vector3[917504];
-    Vector2[] uv = new Vector2[917504];
+    public static float meshCount = 150.0f;
+    public static Mesh[] meshPrefabs = new Mesh[(int) meshCount];
+    Vector3[] vertices = new Vector3[(int) Math.Pow(WorldGenerator.chunkSize, 2) * 1400];
+    Vector2[] uv = new Vector2[(int) Math.Pow(WorldGenerator.chunkSize, 2) * 1400];
     public RectTransform loadingBarTransform;
     public GameObject loadingScreen;
 
-    public static float[,,] heightMap = new float[2000,2000,256];
+    
 
     public static int progress = 0;
+    
     
 
 
@@ -26,9 +29,9 @@ public class MeshPooling : MonoBehaviour
 
         Application.targetFrameRate = 9999;
         int cubeNumber = 0;
-        for(int y = 0; y < 256; y++) {
-            for(int z = 0; z < 16; z++) {
-                for(int x = 0; x < 16; x++) {
+        for(int y = 0; y < 100; y++) {
+            for(int z = 0; z < WorldGenerator.chunkSize; z++) {
+                for(int x = 0; x < WorldGenerator.chunkSize; x++) {
                     vertices[(cubeNumber * 14)] = new Vector3(x + 0, y + 1, z + 0);
                     vertices[(cubeNumber * 14) + 1] = new Vector3(x + 0, y + 0, z + 0);
                     vertices[(cubeNumber * 14) + 2] = new Vector3(x + 1, y + 1, z + 0);
@@ -71,14 +74,13 @@ public class MeshPooling : MonoBehaviour
         mesh.normals = vertices;
         mesh.uv = uv;
         mesh.normals = vertices;
-        float meshCount = 100.0f;
+        
 
         for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
             loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (i / meshCount) * 1520);
-            yield return new WaitForSeconds(0.001f);
+            yield return new WaitForSeconds(0.01f);
         }
-        GenerateHeightMap();
         loadingScreen.SetActive(false);
     }
 
@@ -89,32 +91,6 @@ public class MeshPooling : MonoBehaviour
     }
 
 
-
-    public void GenerateHeightMap() {
-        for(int chunkX = -50; chunkX < 50; chunkX++) {
-            for(int chunkZ = -50; chunkZ < 50; chunkZ++) {
-                int i = 0;
-                Vector2[] noiseMap = new Vector2[256];
-                for(int x = 0; x < 16; x++) {
-                    for(int z = 0; z < 16; z++) {
-                        noiseMap[i] = new Vector2(x + (chunkX * 16), (chunkZ * 16) + z);
-                        i++;
-                    }
-                }
-                float[] singleHeightMap = CalculateHeights(noiseMap);
-                for(int a = 0; a < 256; a++) {
-                    heightMap[chunkX + 1000, chunkZ + 1000, a] = Mathf.Pow(singleHeightMap[a], 2.0f);
-                }
-            }
-        }
-
-    }
-
-
-
-
-    float[] CalculateHeights(Vector2[] map) {
-        return NoiseS3D.NoiseArrayGPU(map, 0.01f, true);
-    }
+    
 
 }

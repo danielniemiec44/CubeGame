@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Diagnostics;
 
 public enum Heading
 {
@@ -13,18 +14,15 @@ public enum Heading
 public class WorldGenerator : MonoBehaviour
 {
     public Texture texture;
-    public GameObject chunkPrefab;
+    public GameObject prefab;
+    public static GameObject chunkPrefab;
 
-
-    //List<Vector3> verticesList;
-    //List<int> trianglesList;
-    //int[,,] cubes = new int[16,16,16];
     int cubesCountTotal = 0;
 
 
-    public GameObject player;
-    List<Vector2> chunksLoaded;
-    Queue<Vector2> chunksQueued;
+    public static GameObject player;
+    public static List<Vector2> chunksLoaded;
+    public static Queue<Vector2> chunksQueued;
 
     GameObject canvas;
 
@@ -35,12 +33,14 @@ public class WorldGenerator : MonoBehaviour
 
     public Material material;
     public Material material2;
+
+    public static int chunkSize = 16;
     
 
 
     Mesh cubeMesh;
-    RenderParams[] rps;
-    int renderDistance = 4;
+    public static RenderParams[] rps;
+    public static int renderDistance = 2;
 
     //Vector3[] cubeVertices;
     //int[] cubeTriangles;
@@ -62,10 +62,13 @@ public class WorldGenerator : MonoBehaviour
 
 
 
-    int standardHeight = 70;
+    public static int standardHeight = 70;
 
-    static int playerChunkX;
-    static int playerChunkZ;
+
+
+    public static List<GameObject> chunkObjectsUnloaded = new List<GameObject>();
+
+    public static float[,,] heightMap = new float[100,100,(int) Math.Pow(WorldGenerator.chunkSize, 2)];
 
     
 
@@ -79,7 +82,7 @@ public class WorldGenerator : MonoBehaviour
     void Start()
     {
         
-
+        chunkPrefab = prefab;
         chunksLoaded = new List<Vector2>();
         chunksQueued = new Queue<Vector2>();
         canvas = GameObject.Find("Canvas");
@@ -106,13 +109,17 @@ public class WorldGenerator : MonoBehaviour
         rps[9] = new RenderParams(materialConstructor.materials[9]);
         rps[10] = new RenderParams(materialConstructor.materials[10]);
 
+        GenerateHeightMap();
+
         
 
-        for(int x = -renderDistance; x < renderDistance; x++) {
-            for(int z = -renderDistance; z < renderDistance; z++) {
+        for(int x = -5; x < 5; x++) {
+            for(int z = -5; z < 5; z++) {
                 GenerateChunk(x, z);
             }
         }
+
+        MeshInstance.meshUpdater.updateViewAsync();
 
     }
 
@@ -121,127 +128,72 @@ public class WorldGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        playerChunkX = (int) (player.transform.position.x / 16);
-        playerChunkZ = (int) (player.transform.position.z / 16);
-
-        
-
-
-        for(int x = playerChunkX - renderDistance; x < playerChunkX + renderDistance; x++) {
-            for(int z = playerChunkZ - renderDistance; z < playerChunkZ + renderDistance; z++) {
-                Vector2 chunk = new Vector2(x, z);
-                if(!chunksLoaded.Contains(chunk) && !chunksQueued.Contains(chunk)) {
-                    chunksQueued.Enqueue(new Vector2(x, z));
-                }
-            }
-        }
-            
-
-
-        if(framesBehind > framesInterval) {
-            if(chunksQueued.Count != 0) {
-                Vector2 chunk = chunksQueued.Dequeue();
-                GenerateChunk((int) chunk.x, (int) chunk.y);
-            }
-            framesBehind = 0;
-        }
-        framesBehind++;
-
-
-        
-
-        int i = 0;
-        foreach(MeshInstance instance in MeshInstance.meshList)
-        {
-            if(instance != null) {
-                if((instance.chunkX < playerChunkX - renderDistance || instance.chunkX > playerChunkX + renderDistance) || (instance.chunkZ < playerChunkZ - renderDistance || instance.chunkZ > playerChunkZ + renderDistance)) {
-                    //Vector2 oldChunk = new Vector2(instance.chunkX, instance.chunkZ);
-                    int a = 0;
-                    foreach(Vector2 oldChunk in chunksLoaded) {
-                        if(oldChunk.x == instance.chunkX && oldChunk.y == instance.chunkZ) {
-                            chunksLoaded.Remove(oldChunk);
-                            break;
-                        }
-                        a++;
-                    }
-                    Destroy(GameObject.Find("Chunk(" + instance.chunkX + "," + instance.chunkZ + ")"));
-                    MeshInstance.meshList[i] = null;
-                    MeshPooling.meshPrefabs[i].triangles = null;
-                    break;
-                }
-            }
-            i++;
-        }
-
-
-
-
-
-
-        // only use the Y component of the objects orientation
-        // always returns a value between 0 and 360
-        myHeading = player.transform.eulerAngles.y;
-        // also this is always a value between 0 and 360
-        northHeading = Input.compass.magneticHeading;
-
-        dif = myHeading - northHeading;
-        // wrap the value so it is always between 0 and 360
-        if (dif < 0) dif += 360f;
-
-        if (dif > 45 && dif <= 135)
-        {
-            heading = Heading.East;
-        }
-        else if (dif > 135 && dif <= 225)
-        {
-            heading = Heading.South;
-        }
-        else if (dif > 225 && dif <= 315)
-        {
-            heading = Heading.West;
-        }
-        else
-        {
-            heading = Heading.North;
-        }
-
-            foreach(MeshInstance meshInstance in MeshInstance.meshList){
+        foreach(MeshInstance meshInstance in MeshInstance.meshList){
                 if(meshInstance != null) {
-                    for(int submeshIndex = 1; submeshIndex < meshInstance.mesh.subMeshCount; submeshIndex++) {
-                        Graphics.RenderMesh(rps[submeshIndex - 1], meshInstance.mesh, submeshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * 16, 0, meshInstance.chunkZ * 16)));
+                    for(int submeshIndex = 1; submeshIndex < 11; submeshIndex++) {
+                        Graphics.RenderMesh(WorldGenerator.rps[submeshIndex - 1], meshInstance.mesh, submeshIndex, Matrix4x4.Translate(new Vector3(meshInstance.chunkX * chunkSize, 0, meshInstance.chunkZ * chunkSize)));
                     }
                 }
             }
-            
-        //}
+    }
+
+    public void GenerateHeightMap() {
+        for(int chunkX = -50; chunkX < 50; chunkX++) {
+            for(int chunkZ = -50; chunkZ < 50; chunkZ++) {
+                int i = 0;
+                Vector2[] noiseMap = new Vector2[(int) Math.Pow(WorldGenerator.chunkSize, 2)];
+                for(int x = 0; x < WorldGenerator.chunkSize; x++) {
+                    for(int z = 0; z < WorldGenerator.chunkSize; z++) {
+                        noiseMap[i] = new Vector2(x + (chunkX * WorldGenerator.chunkSize), (chunkZ * WorldGenerator.chunkSize) + z);
+                        i++;
+                    }
+                }
+                float[] singleHeightMap = CalculateHeights(noiseMap);
+                for(int a = 0; a < (int) Math.Pow(WorldGenerator.chunkSize, 2); a++) {
+                    heightMap[chunkX + 50, chunkZ + 50, a] = Mathf.Pow(singleHeightMap[a], 2.0f);
+                }
             }
+        }
+
+    }
+
+    float[] CalculateHeights(Vector2[] map) {
+        return NoiseS3D.NoiseArrayGPU(map, 0.01f, true);
+    }
 
 
 
 
 
 
-    void GenerateChunk(int chunkX, int chunkZ)
+    public static void GenerateChunk(int chunkX, int chunkZ)
     {
-        //int cubeNumber = 0;
-        GameObject chunk = Instantiate(chunkPrefab, new Vector3(chunkX * 16, 0, chunkZ * 16), Quaternion.identity);
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        
+        GameObject chunk = null;
+        if(chunkObjectsUnloaded.Count == 0) {
+            chunk = Instantiate(chunkPrefab, new Vector3(chunkX * chunkSize, 0, chunkZ * chunkSize), Quaternion.identity);
+        } else {
+            chunk = chunkObjectsUnloaded[0];
+            chunk.transform.position = new Vector3(chunkX * chunkSize, 0, chunkZ * chunkSize);
+            chunkObjectsUnloaded.RemoveAt(0);
+        }
         chunk.name = "Chunk(" + chunkX + "," + chunkZ + ")";
-        //MeshFilter meshFilter = chunk.GetComponent<MeshFilter> ();
-        //Renderer renderer = chunk.GetComponent<Renderer>();
         MeshCollider meshCollider = chunk.GetComponent<MeshCollider>();
 
         int heightMapPosition = 0;
-        int[] blockIds = new int[65536];
+        int[] blockIds = new int[(int) Math.Pow(chunkSize, 2) * 100];
         
-        for(int x = 0; x < 16; x++) {
-            for(int z = 0; z < 16; z++) {
-                blockIds[calculateCubeIndex(new Vector3(x, (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight, z))] = 1;
+        for(int x = 0; x < chunkSize; x++) {
+            for(int z = 0; z < chunkSize; z++) {
+                blockIds[calculateCubeIndex(new Vector3(x, (int) (heightMap[chunkX + 50, chunkZ + 50, heightMapPosition] * 10) + standardHeight, z))] = 1;
                 blockIds[calculateCubeIndex(new Vector3(x, 0, z))] = 3;
                 for(int y = 1; y < standardHeight; y++) {
                     blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 4;
                 }
-                for(int y = standardHeight; y < (int) (MeshPooling.heightMap[chunkX + 1000, chunkZ + 1000, heightMapPosition] * 10) + standardHeight; y++) {
+                for(int y = standardHeight; y < (int) (heightMap[chunkX + 50, chunkZ + 50, heightMapPosition] * 10) + standardHeight; y++) {
                     blockIds[calculateCubeIndex(new Vector3(x, y, z))] = 2;
                 }
                 heightMapPosition++;
@@ -251,9 +203,14 @@ public class WorldGenerator : MonoBehaviour
 
         int freeMesh = getFreeMesh();
         Mesh mesh = MeshPooling.meshPrefabs[freeMesh];
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("It takes: " + stopwatch.ElapsedMilliseconds + "ms!");
 
+        stopwatch = new Stopwatch();
+        stopwatch.Start();
         MeshInstance.meshList[freeMesh] = new MeshInstance(mesh, chunkX, chunkZ, blockIds, chunk, freeMesh);
-        
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("Adding mesh instance takes: " + stopwatch.ElapsedMilliseconds + "ms!");
 
         chunksLoaded.Add(new Vector2(chunkX, chunkZ));
 
@@ -336,13 +293,13 @@ public class WorldGenerator : MonoBehaviour
         int y = (int) vector.y;
         int z = (int) vector.z;
 
-        return x + (z * 16) + (y * 256);
+        return x + (z * chunkSize) + (y * (int) Math.Pow(chunkSize, 2));
     }
 
     public static Vector3 calculateCubeVector(int cubeIndex) {
-        float blockX = cubeIndex % 16;
-        float blockY = (int) (cubeIndex / 256);
-        float blockZ = (int) ((cubeIndex - (blockY * 256)) / 16);
+        float blockX = cubeIndex % chunkSize;
+        float blockY = (int) (cubeIndex / (int) Math.Pow(chunkSize, 2));
+        float blockZ = (int) ((cubeIndex - (blockY * (int) Math.Pow(chunkSize, 2))) / chunkSize);
 
         return new Vector3(blockX, blockY, blockZ);
     }
@@ -351,7 +308,7 @@ public class WorldGenerator : MonoBehaviour
 
     
 
-    public int getFreeMesh() {
+    public static int getFreeMesh() {
         int i = 0;
         foreach(MeshInstance instance in MeshInstance.meshList) {
             if(instance == null) {

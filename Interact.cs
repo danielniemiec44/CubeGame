@@ -106,7 +106,7 @@ public class Interact : MonoBehaviour
 
     public void setBlock() {
         Vector3 block = checkLookingAt();
-        if(block.y > 0) {
+        if(block.y > 0 && block.y < 100) {
             MeshInstance.setBlock(getRelativeBlock());
         }
     }
