@@ -78,6 +78,7 @@ public class MeshPooling : MonoBehaviour
 
         for(int i = 0; i < meshCount; i++) {
             meshPrefabs[i] = Instantiate(mesh);
+            Debug.Log(WorldGenerator.chunkSize);
             loadingBarTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (i / meshCount) * 1520);
             yield return new WaitForSeconds(0.01f);
         }
